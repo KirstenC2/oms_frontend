@@ -23,6 +23,16 @@ const router = createRouter({
       name: 'users',
       component: UserView,
     },
+    {
+      path: '/departments',
+      name: 'departments',
+      component: () => import('../views/DepartmentView.vue'),
+    },
+    {
+      path: '/roles',
+      name: 'roles',
+      component: () => import('../views/RoleView.vue'),
+    },
   ],
 })
 

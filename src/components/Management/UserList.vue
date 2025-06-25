@@ -36,7 +36,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import UserCard from './user/UserCard.vue'
+import UserCard from '../Management/UserCard.vue'
 
 const users = ref([])
 const loading = ref(true)

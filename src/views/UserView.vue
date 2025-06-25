@@ -1,16 +1,32 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import UsersUpdateForm from '../components/user/UsersUpdateForm.vue';
-import UserCard from '../components/user/UserCard.vue';
+import { useRouter } from 'vue-router'
+import UsersUpdateForm from '../components/Management/UsersUpdateForm.vue';
+import UserCard from '../components/Management/UserCard.vue';
 import axios from 'axios'
 
 const users = ref<any[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+const router = useRouter()
+
+// Track which sub-page is active: 'list' or 'form'
+const view = ref<'list' | 'form'>('list')
+
+function navigate(target: string) {
+  if (target === 'users') router.push('/users')
+  if (target === 'departments') router.push('/departments')
+  if (target === 'roles') router.push('/roles')
+}
+
+function setView(target: 'list' | 'form') {
+  view.value = target
+}
 
 onMounted(async () => {
   try {
     const res = await axios.get('http://localhost:5001/users')
+    console.log('Fetched users:', res.data) // Debugging line
     users.value = res.data
     error.value = null
   } catch (err: any) {
@@ -24,12 +40,42 @@ onMounted(async () => {
 
 <template>
   <main>
-    <UsersUpdateForm />
-    <div v-if="loading">Loading users...</div>
-    <div v-else-if="error" style="color:red;">{{ error }}</div>
-    <div v-else>
-      <UserCard v-for="user in users" :key="user.id" :user="user" />
-      <div v-if="users.length === 0">No users found.</div>
+    <nav class="sub-navbar">
+      <button :class="{active: view === 'list'}" @click="setView('list')">User List</button>
+      <button :class="{active: view === 'form'}" @click="setView('form')">User Form</button>
+    </nav>
+    <UsersUpdateForm v-if="view === 'form'" />
+    <div v-if="view === 'list'">
+      <div v-if="loading">Loading users...</div>
+      <div v-else-if="error" style="color:red;">{{ error }}</div>
+      <div v-else>
+        <UserCard v-for="user in users" :key="user.id" :user="user" />
+        <div v-if="users.length === 0">No users found.</div>
+      </div>
     </div>
   </main>
 </template>
+
+<style scoped>
+.sub-navbar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.sub-navbar button {
+  background: #353a3f;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+.sub-navbar button.active {
+  background: #007bff;
+}
+.sub-navbar button:hover {
+  background: #007bff;
+}
+</style>

@@ -5,12 +5,14 @@ import Title from './components/Title.vue'
 
 <template>
   <div class="app-container">
-    <Title msg="Welcome to the OMS Frontend" />
+    <Title msg="OMS" />
     <div class="wrapper">
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
         <RouterLink to="/users">Users</RouterLink>
+        <RouterLink to="/departments">Departments</RouterLink>
+        <RouterLink to="/roles">Roles</RouterLink>
       </nav>
       <RouterView />
     </div>

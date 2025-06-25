@@ -1,14 +1,11 @@
 <template>
-  <div class="user-card">
-    <h3>{{ user.name }}</h3>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    <p><strong>ID:</strong> {{ user.id }}</p>
-    <p><strong>Created At:</strong> {{ user.createdAt }}</p>
-  </div>
+  <CardContent :item="user" type="user" />
 </template>
 
 <script setup lang="ts">
-defineProps<{ user: { id: string, name: string, email: string, createdAt: string } }>()
+import CardContent from '../CardContent.vue'
+
+defineProps<{ user: any }>()
 </script>
 
 <style scoped>
