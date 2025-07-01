@@ -36,7 +36,7 @@ html, body {
   align-items: stretch;
   width: 90vw;
   min-height: 100vh;
-  background: #b46464;
+  background: #fcfcfc;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -65,8 +65,9 @@ h3 {
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
-  background: #353a3f;
   border-radius: 8px;
+  background-color: #353a3f;
+  border-color: 1px #333;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   display: flex;

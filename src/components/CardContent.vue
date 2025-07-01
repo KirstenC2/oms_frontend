@@ -1,14 +1,19 @@
 <template>
   <div class="card-content">
-    <h3>{{ title }}</h3>
+    <h3 class="title-name">{{ title }}</h3>
     <ul>
-      <li v-for="(value, key) in displayFields" :key="key">
+      <li
+        v-for="(value, key) in displayFields"
+        :key="key"
+      >
         <strong>{{ key }}:</strong> {{ value }}
       </li>
+
     </ul>
     <slot />
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { computed } from 'vue'
@@ -54,12 +59,12 @@ const displayFields = computed(() => {
 
 <style scoped>
 .card-content {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border: 1px solid #dddddfdf;
   padding: 1rem;
   margin-bottom: 1rem;
-  background: #b79494;
+  background: #eef5f8;
   box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  color: black;
 }
 h3 {
   margin-top: 0;
@@ -71,4 +76,12 @@ ul {
 li {
   margin-bottom: 0.3rem;
 }
+
+.title-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #214276; /* example color */
+  margin-bottom: 10px;
+}
+
 </style>

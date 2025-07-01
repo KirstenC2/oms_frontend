@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import UsersUpdateForm from '../components/Management/UsersUpdateForm.vue';
+import UsersCreateForm from '../components/Management/UsersCreateForm.vue';
 import UserCard from '../components/Management/UserCard.vue';
 import axios from 'axios'
 
@@ -10,8 +11,8 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const router = useRouter()
 
-// Track which sub-page is active: 'list' or 'form'
-const view = ref<'list' | 'form'>('list')
+// Track which sub-page is active: 'list' or 'update'
+const view = ref<'list' | 'update' | 'create'>('list')
 
 function navigate(target: string) {
   if (target === 'users') router.push('/users')
@@ -19,7 +20,7 @@ function navigate(target: string) {
   if (target === 'roles') router.push('/roles')
 }
 
-function setView(target: 'list' | 'form') {
+function setView(target: 'list' | 'update' | 'create') {
   view.value = target
 }
 
@@ -42,9 +43,11 @@ onMounted(async () => {
   <main>
     <nav class="sub-navbar">
       <button :class="{active: view === 'list'}" @click="setView('list')">User List</button>
-      <button :class="{active: view === 'form'}" @click="setView('form')">User Form</button>
+      <button :class="{active: view === 'update'}" @click="setView('update')">Update User Info</button>
+      <button :class="{active: view === 'create'}" @click="setView('create')">Create New User</button>
     </nav>
-    <UsersUpdateForm v-if="view === 'form'" />
+    <UsersUpdateForm v-if="view === 'update'" />
+    <UsersCreateForm v-else-if="view === 'create'" />
     <div v-if="view === 'list'">
       <div v-if="loading">Loading users...</div>
       <div v-else-if="error" style="color:red;">{{ error }}</div>
