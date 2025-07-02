@@ -10,7 +10,10 @@
       <div v-if="loading">Loading users...</div>
       <div v-else-if="error" style="color:red;">{{ error }}</div>
       <div v-else class="user-container">
-        <CardContent v-for="user in userList" :key="user.id" :item="user" type="user" />
+        <CardContent v-for="user in userList" :key="user.id" :item="user" type="user" @refreshRequest="() => {
+            console.log('Event received ✅');
+            loadUsers()
+          }"/>
         <div v-if="userList.length === 0">No users found.</div>
       </div>
     </div>
@@ -62,7 +65,7 @@ function navigate(target: string) {
 const userFields = ref<Field[]>([])
 const userList = ref<any[]>([])
 
-onMounted(async () => {
+const loadUsers = async () => {
   loading.value = true
   error.value = null
   try {
@@ -111,6 +114,11 @@ onMounted(async () => {
   } catch (err) {
     console.error('Failed to load departments or roles', err)
   }
+}
+
+onMounted(async () => {
+  loadUsers()
+  console.log('Users loaded:', userList.value)
 })
 
 </script>

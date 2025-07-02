@@ -18,7 +18,10 @@
             :item="role"
             type="role"
             class="role-card"
-          />
+            @refreshRequest="() => {
+            console.log('Event received ✅');
+            loadRoles()
+          }"/>
         </div>
         <div v-if="roles.length === 0">No role found.</div>
       </div>
@@ -51,25 +54,31 @@ const roleTabs = [
   { view: 'create', label: 'Create New Role' }
 ]
 
-onMounted(async () => {
+const loadRoles = async () => {
+  loading.value = true
+  error.value = null
   try {
-    const deptRes = await fetchRoles()
-    roles.value = deptRes.data
+    const res = await fetchRoles()
+    roles.value = res.data
 
     roleFields.value = [
-      { name: 'name', label: 'Role Name', type: 'text', required: true }    ]
-    // check for listing status
-    if (!roles || roles.value.length === 0) {
-        error.value = 'No roles found'
-      } else {
-        loading.value = false
-      }
-    }catch (err: any) {
+      { name: 'name', label: 'Role Name', type: 'text', required: true }
+    ]
+
+    if (!roles.value.length) {
+      error.value = 'No roles found'
+    }
+  } catch (err: any) {
     error.value = err.response?.data?.message || 'Failed to fetch roles'
     roles.value = []
   } finally {
     loading.value = false
   }
+}
+
+onMounted(async () => {
+  loadRoles()
+  console.log('Roles loaded:', roles.value)
 })
 </script>
 <style scoped>

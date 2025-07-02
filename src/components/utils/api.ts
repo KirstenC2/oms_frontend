@@ -12,5 +12,12 @@ export const createDepartment = (data: Record<string, any>) =>
 export const fetchDepartments = () => axios.get('http://localhost:5001/departments')
 export const fetchRoles = () => axios.get('http://localhost:5001/roles')
 export const fetchUsers = () => axios.get('http://localhost:5001/users')
+
 export const deleteDepartment = (id: string) =>
   axios.delete(`http://localhost:5001/departments/${id}`)
+
+export const deleteRole = (id: string) =>
+  axios.delete(`http://localhost:5001/roles/${id}`)
+
+export const deleteUser = (id: string) =>
+  axios.delete(`http://localhost:5001/users/${id}`) 

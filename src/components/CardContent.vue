@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { deleteDepartment, fetchDepartments } from './utils/api' // ✅ This is the delete API you're calling
+import { deleteDepartment, fetchDepartments, deleteRole, deleteUser } from './utils/api' // ✅ This is the delete API you're calling
 
 const props = defineProps<{
   item: Record<string, any>,
@@ -65,10 +65,23 @@ const deleteItem = async () => {
   try {
     if (props.type === 'department') {
       await deleteDepartment(props.item.id)
-      
-
+  
       console.log(`Department ${props.item.id} deleted successfully.`)
       emit('refreshRequest')
+    }
+    else if (props.type === 'user') {
+      await deleteUser(props.item.id)
+  
+      console.log(`User ${props.item.id} deleted successfully.`)
+      emit('refreshRequest')
+    }
+    else if (props.type === 'role') {
+      await deleteRole(props.item.id)
+  
+      console.log(`Role ${props.item.id} deleted successfully.`)
+      emit('refreshRequest')
+    } else {
+      console.warn('Unknown type for deletion:', props.type)
     }
 
   } catch (err) {
