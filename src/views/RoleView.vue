@@ -1,8 +1,7 @@
 <template>
-  <div>
-    <h2>Roles</h2>
+  <main>
     <SubNavBar :tabs="roleTabs" :view="view" @change="setView" />
-    <!-- <CreateFormTemplate v-if="view === 'create'" title="Create Role" /> -->
+    <h2>Roles</h2>
     <GenericCreateForm v-if="view === 'create'"
       title="Create Role"
       :fields="roleFields"
@@ -24,7 +23,7 @@
         <div v-if="roles.length === 0">No role found.</div>
       </div>
       </div>  
-  </div>
+    </main>
 </template>
 
 
@@ -55,7 +54,6 @@ const roleTabs = [
 onMounted(async () => {
   try {
     const deptRes = await fetchRoles()
-    console.log('Fetched roles:', deptRes)
     roles.value = deptRes.data
 
     roleFields.value = [

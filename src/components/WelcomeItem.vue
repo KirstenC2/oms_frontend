@@ -24,7 +24,7 @@
   margin-left: 1rem;
 }
 
-i {
+/* i {
   display: flex;
   place-items: center;
   place-content: center;
@@ -32,7 +32,7 @@ i {
   height: 32px;
 
   color: var(--color-text);
-}
+} */
 
 h3 {
   font-size: 1.2rem;

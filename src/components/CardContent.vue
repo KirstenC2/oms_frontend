@@ -41,14 +41,14 @@ const displayFields = computed(() => {
   }
   if (props.type === 'department') {
     return {
-      ID: props.item.id,
+      // ID: props.item.id,
       Name: props.item.name,
       Description: props.item.description,
     }
   }
   if (props.type === 'role') {
     return {
-      ID: props.item.id,
+      // ID: props.item.id,
       Name: props.item.name,
       Description: props.item.description,
     }

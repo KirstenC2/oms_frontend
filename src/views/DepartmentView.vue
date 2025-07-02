@@ -1,25 +1,22 @@
 <template>
-  <div>
-    <h2>Departments</h2>
+  <main>
     <SubNavBar :tabs="departmentTabs" :view="view" @change="setView" />
-    <!-- <CreateFormTemplate v-if="view === 'create'" title="Create Department" /> -->
-    <GenericCreateForm v-if="view === 'create'"
-      title="Create Department"
-      :fields="deptFields"
-      :submitHandler="createDepartment"
-    />
+
+    <h2>Departments</h2>
+    <GenericCreateForm v-if="view === 'create'" title="Create Department" :fields="deptFields"
+      :submitHandler="createDepartment" />
     <div v-if="view === 'list'">
       <div v-if="loading">Loading departments...</div>
-        <div v-else-if="error" style="color:red;">{{ error }}</div>
-        <div v-else>
-          <div class="department-container">
-            <CardContent v-for="dept in departments" :key="dept.id" :item="dept" type="department" />
-          </div>
-          <!-- <CreateFormTemplate title="Create Department" /> -->
+      <div v-else-if="error" style="color:red;">{{ error }}</div>
+      <div v-else>
+        <div class="department-container">
+          <CardContent v-for="dept in departments" :key="dept.id" :item="dept" type="department" />
+        </div>
+        <!-- <CreateFormTemplate title="Create Department" /> -->
         <div v-if="departments.length === 0">No departments found.</div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -42,21 +39,17 @@ onMounted(async () => {
   error.value = null
   try {
     const deptRes = await fetchDepartments()
-    console.log('Fetched departments:', deptRes)
     departments.value = deptRes.data
 
     deptFields.value = [
-      { name: 'name', label: 'Department Name', type: 'text', required: true }    ]
-
-
-
+      { name: 'name', label: 'Department Name', type: 'text', required: true }]
     // check for listing status
     if (!departments || departments.value.length === 0) {
-        error.value = 'No departments found'
-      } else {
-        loading.value = false
-      }
-    }catch (err: any) {
+      error.value = 'No departments found'
+    } else {
+      loading.value = false
+    }
+  } catch (err: any) {
     error.value = err.response?.data?.message || 'Failed to fetch departments'
     departments.value = []
   } finally {
@@ -83,7 +76,8 @@ const departmentTabs = [
 }
 
 .department-card {
-  flex: 1 1 calc(33.333% - 16px); /* 3 in a row with gap considered */
+  flex: 1 1 calc(33.333% - 16px);
+  /* 3 in a row with gap considered */
   box-sizing: border-box;
 }
 </style>

@@ -1,19 +1,16 @@
 <template>
   <main>
     <SubNavBar :tabs="userTabs" :view="view" @change="setView" />
+    <h2>Users</h2>
     <UsersUpdateForm v-if="view === 'update'" />
-    <!-- <CreateFormTemplate v-else-if="view === 'create'" title="Create User"  /> -->
-    <GenericCreateForm v-else-if="view === 'create'"
-    title="Create User"
-    :fields="userFields"
-    :submitHandler="createUser"
-  />
-    
+    <GenericCreateForm v-else-if="view === 'create'" title="Create User" :fields="userFields"
+      :submitHandler="createUser" />
+
     <div v-else-if="view === 'list'">
       <div v-if="loading">Loading users...</div>
       <div v-else-if="error" style="color:red;">{{ error }}</div>
-      <div v-else>
-        <UserCard v-for="user in userList" :key="user.id" :user="user" />
+      <div v-else class="user-container">
+        <CardContent v-for="user in userList" :key="user.id" :item="user" type="user" />
         <div v-if="userList.length === 0">No users found.</div>
       </div>
     </div>
@@ -25,7 +22,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import UsersUpdateForm from '../components/Management/UsersUpdateForm.vue';
 // import CreateFormTemplate from '../components/Management/CreateFormTemplate.vue';
-import UserCard from '../components/Management/UserCard.vue';
+import CardContent from '../components/CardContent.vue'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
 import axios from 'axios'
 import type { Field } from '@/components/form/types'
@@ -78,7 +75,7 @@ onMounted(async () => {
     const departments = deptRes.data
     const roles = roleRes.data
     const users = userRes.data
-    
+
     // prepare user field for generic form - another component
     userFields.value = [
       { name: 'email', label: 'Email', type: 'email', required: true },
@@ -104,12 +101,12 @@ onMounted(async () => {
         }))
       }
     ]
-  // check for listing status
-  if (!users || users.length === 0) {
+    // check for listing status
+    if (!users || users.length === 0) {
       error.value = 'No users found'
     } else {
       loading.value = false
-      userList.value = users  
+      userList.value = users
     }
   } catch (err) {
     console.error('Failed to load departments or roles', err)
@@ -119,25 +116,15 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.sub-navbar {
+.user-container {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 16px;
 }
-.sub-navbar button {
-  background: #353a3f;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-}
-.sub-navbar button.active {
-  background: #007bff;
-}
-.sub-navbar button:hover {
-  background: #007bff;
+
+.user-card {
+  flex: 1 1 calc(33.333% - 16px);
+  /* 3 in a row with gap considered */
+  box-sizing: border-box;
 }
 </style>
