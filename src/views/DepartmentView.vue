@@ -2,7 +2,12 @@
   <div>
     <h2>Departments</h2>
     <SubNavBar :tabs="departmentTabs" :view="view" @change="setView" />
-    <CreateFormTemplate v-if="view === 'create'" title="Create Department" />
+    <!-- <CreateFormTemplate v-if="view === 'create'" title="Create Department" /> -->
+    <GenericCreateForm v-if="view === 'create'"
+      title="Create Department"
+      :fields="deptFields"
+      :submitHandler="createDepartment"
+    />
     <div v-if="view === 'list'">
       <div v-if="loading">Loading departments...</div>
         <div v-else-if="error" style="color:red;">{{ error }}</div>
@@ -20,20 +25,38 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import CardContent from '../components/CardContent.vue'
-import CreateFormTemplate from '@/components/Management/CreateFormTemplate.vue'
+// import CreateFormTemplate from '@/components/Management/CreateFormTemplate.vue'
 import axios from 'axios'
+import type { Field } from '@/components/form/types'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue'
+import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
+import { fetchDepartments, createDepartment } from '@/components/utils/api'
 
 const departments = ref<any[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deptFields = ref<Field[]>([])
 
 onMounted(async () => {
+  loading.value = true
+  error.value = null
   try {
-    const res = await axios.get('http://localhost:5001/departments')
-    departments.value = res.data
-    error.value = null
-  } catch (err: any) {
+    const deptRes = await fetchDepartments()
+    console.log('Fetched departments:', deptRes)
+    departments.value = deptRes.data
+
+    deptFields.value = [
+      { name: 'name', label: 'Department Name', type: 'text', required: true }    ]
+
+
+
+    // check for listing status
+    if (!departments || departments.value.length === 0) {
+        error.value = 'No departments found'
+      } else {
+        loading.value = false
+      }
+    }catch (err: any) {
     error.value = err.response?.data?.message || 'Failed to fetch departments'
     departments.value = []
   } finally {
@@ -49,6 +72,8 @@ const departmentTabs = [
   { view: 'list', label: 'Department List' },
   { view: 'create', label: 'Create New Department' }
 ]
+
+
 </script>
 <style scoped>
 .department-container {
