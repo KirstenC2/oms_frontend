@@ -1,0 +1,14 @@
+import axios from 'axios'
+
+export const createUser = (data: Record<string, any>) =>
+  axios.post('http://localhost:5001/users', data)
+
+export const createRole = (data: Record<string, any>) =>
+  axios.post('http://localhost:5001/roles', data)
+
+export const createDepartment = (data: Record<string, any>) =>
+  axios.post('http://localhost:5001/departments', data)
+
+export const fetchDepartments = () => axios.get('http://localhost:5001/departments')
+export const fetchRoles = () => axios.get('http://localhost:5001/roles')
+export const fetchUsers = () => axios.get('http://localhost:5001/users')

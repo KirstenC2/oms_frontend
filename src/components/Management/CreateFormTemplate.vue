@@ -79,4 +79,29 @@ async function createUser() {
     result.value = null
   }
 }
+
+async function createRole() {
+  try {
+    const response = await axios.post(`http://localhost:5001/roles`, {
+      name: name.value || undefined
+    })
+    result.value = response.data
+    error.value = null
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Create failed'
+    result.value = null
+  }
+}
+async function createDepartment() {
+  try {
+    const response = await axios.post(`http://localhost:5001/departments`, {
+      name: name.value || undefined
+    })
+    result.value = response.data
+    error.value = null
+  } catch (err) {
+    error.value = err.response?.data?.message || 'Create failed'
+    result.value = null
+  }
+}
 </script>
