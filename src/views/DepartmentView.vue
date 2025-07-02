@@ -10,7 +10,10 @@
       <div v-else-if="error" style="color:red;">{{ error }}</div>
       <div v-else>
         <div class="department-container">
-          <CardContent v-for="dept in departments" :key="dept.id" :item="dept" type="department" />
+          <CardContent v-for="dept in departments" :key="dept.id" :item="dept" type="department" @refreshRequest="() => {
+            console.log('Event received ✅');
+            loadDepartments()
+          }"/>
         </div>
         <!-- <CreateFormTemplate title="Create Department" /> -->
         <div v-if="departments.length === 0">No departments found.</div>
@@ -34,7 +37,7 @@ const loading = ref(true)
 const error = ref<string | null>(null)
 const deptFields = ref<Field[]>([])
 
-onMounted(async () => {
+const loadDepartments = async () => {
   loading.value = true
   error.value = null
   try {
@@ -42,12 +45,11 @@ onMounted(async () => {
     departments.value = deptRes.data
 
     deptFields.value = [
-      { name: 'name', label: 'Department Name', type: 'text', required: true }]
-    // check for listing status
-    if (!departments || departments.value.length === 0) {
+      { name: 'name', label: 'Department Name', type: 'text', required: true }
+    ]
+
+    if (!departments.value.length) {
       error.value = 'No departments found'
-    } else {
-      loading.value = false
     }
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Failed to fetch departments'
@@ -55,6 +57,11 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+onMounted(async () => {
+  loadDepartments()
+  console.log('Departments loaded:', departments.value)
 })
 
 const view = ref('list')

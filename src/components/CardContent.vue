@@ -8,20 +8,25 @@
       >
         <strong>{{ key }}:</strong> {{ value }}
       </li>
-
+      <button @click="deleteItem">Remove</button>
     </ul>
     <slot />
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { computed } from 'vue'
+import { deleteDepartment, fetchDepartments } from './utils/api' // ✅ This is the delete API you're calling
 
 const props = defineProps<{
   item: Record<string, any>,
   type: 'user' | 'department' | 'role',
 }>()
+
+const emit = defineEmits<{
+  (e: 'refreshRequest'): void
+}>()
+
 
 const title = computed(() => {
   if (props.type === 'user') return props.item.name || props.item.email || 'User'
@@ -41,21 +46,37 @@ const displayFields = computed(() => {
   }
   if (props.type === 'department') {
     return {
-      // ID: props.item.id,
+      ID: props.item.id,
       Name: props.item.name,
       Description: props.item.description,
     }
   }
   if (props.type === 'role') {
     return {
-      // ID: props.item.id,
       Name: props.item.name,
       Description: props.item.description,
     }
   }
   return {}
 })
+
+// ✅ Main API call logic — passes props.item.id to deleteDepartment
+const deleteItem = async () => {
+  try {
+    if (props.type === 'department') {
+      await deleteDepartment(props.item.id)
+      
+
+      console.log(`Department ${props.item.id} deleted successfully.`)
+      emit('refreshRequest')
+    }
+
+  } catch (err) {
+    console.error('Error deleting department:', err)
+  }
+}
 </script>
+
 
 <style scoped>
 .card-content {
