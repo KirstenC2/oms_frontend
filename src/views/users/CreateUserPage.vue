@@ -6,7 +6,6 @@
       :submitHandler="handleCreateUser"
       submitButtonText="創建使用者"
       purpose="create"
-      @submitSuccess="handleFormSubmitSuccess"
     />
   </div>
 </template>

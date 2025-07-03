@@ -1,10 +1,7 @@
 <template>
+  <SubNavBar :tabs="departmentTabs" :view="view" @change="setView" />
   <main>
-    <SubNavBar :tabs="departmentTabs" :view="view" @change="setView" />
-
     <h2>Departments</h2>
-    <!-- <GenericCreateForm v-if="view === 'create'" title="Create Department" :fields="deptFields"
-      :submitHandler="createDepartment" /> -->
     <div v-if="view === 'list'">
       <div v-if="loading">Loading departments...</div>
       <div v-else-if="error" style="color:red;">{{ error }}</div>
@@ -15,10 +12,10 @@
             loadDepartments()
           }"/>
         </div>
-        <!-- <CreateFormTemplate title="Create Department" /> -->
         <div v-if="departments.length === 0">No departments found.</div>
       </div>
     </div>
+    <CreateDepartmentPage v-else-if="view === 'create'" title="Create Department" />
   </main>
 </template>
 
@@ -31,6 +28,7 @@ import type { Field } from '@/components/form/types'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue'
 // import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
 import { fetchDepartments, createDepartment } from '@/components/utils/api'
+import CreateDepartmentPage from './departments/CreateDepartmentPage.vue'
 
 const departments = ref<any[]>([])
 const loading = ref(true)

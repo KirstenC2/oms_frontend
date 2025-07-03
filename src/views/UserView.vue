@@ -48,8 +48,6 @@ const userTabs = [
   { view: 'create', label: 'Create New User' }
 ]
 
-// Track which sub-page is active: 'list' or 'update'
-// const view = ref<'list' | 'update' | 'create'>('list')
 
 function navigate(target: string) {
   if (target === 'users') router.push('/users')
