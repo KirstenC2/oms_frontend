@@ -37,6 +37,7 @@ const title = computed(() => {
 
 const displayFields = computed(() => {
   if (props.type === 'user') {
+    console.log('User item:', props.item)
     return {
       Name: props.item.name,
       Email: props.item.email,

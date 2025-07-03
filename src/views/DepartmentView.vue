@@ -1,6 +1,7 @@
 <template>
-  <SubNavBar :tabs="departmentTabs" :view="view" @change="setView" />
+  
   <main>
+    <SubNavBar :tabs="departmentTabs" :view="view" @change="setView" />
     <h2>Departments</h2>
     <div v-if="view === 'list'">
       <div v-if="loading">Loading departments...</div>
@@ -10,7 +11,7 @@
           <CardContent v-for="dept in departments" :key="dept.id" :item="dept" type="department" @refreshRequest="() => {
             console.log('Event received ✅');
             loadDepartments()
-          }"/>
+          }" />
         </div>
         <div v-if="departments.length === 0">No departments found.</div>
       </div>
@@ -22,8 +23,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import CardContent from '../components/CardContent.vue'
-// import CreateFormTemplate from '@/components/Management/CreateFormTemplate.vue'
-import axios from 'axios'
 import type { Field } from '@/components/form/types'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue'
 // import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
@@ -82,7 +81,6 @@ const departmentTabs = [
 
 .department-card {
   flex: 1 1 calc(33.333% - 16px);
-  /* 3 in a row with gap considered */
   box-sizing: border-box;
 }
 </style>

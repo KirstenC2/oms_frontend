@@ -16,14 +16,14 @@ export const userFormSchema: FormSchema = [
     placeholder: '請輸入使用者姓名',
   },
   {
-    name: 'department_id', // 對應後端模型中的 department_id
+    name: 'departmentId', // 對應後端模型中的 department_id
     label: '部門',
     type: 'select',
     options: [], // 將由頁面組件動態填充
     defaultValue: '', // 允許初始為空，表示未選擇
   },
   {
-    name: 'role_id', // 對應後端模型中的 role_id
+    name: 'roleId', // 對應後端模型中的 role_id
     label: '角色',
     type: 'select',
     options: [], // 將由頁面組件動態填充

@@ -48,7 +48,7 @@ const userSchemaWithDynamicOptions = computed<FormSchema>(() => {
   if (isLoadingOptions.value) {
     // 在選項加載完成之前，返回基本 Schema 或禁用相關欄位
     return userFormSchema.map(field => {
-      if (field.name === 'department_id' || field.name === 'role_id') {
+      if (field.name === 'departmentId' || field.name === 'roleId') {
         return { ...field, placeholder: '載入中...' }; // 顯示載入狀態
       }
       return field;
@@ -56,10 +56,10 @@ const userSchemaWithDynamicOptions = computed<FormSchema>(() => {
   }
 
   return userFormSchema.map(field => {
-    if (field.name === 'department_id') {
+    if (field.name === 'departmentId') {
       return { ...field, options: [{ value: '', label: '請選擇部門' }, ...departments.value] };
     }
-    if (field.name === 'role_id') {
+    if (field.name === 'roleId') {
       return { ...field, options: [{ value: '', label: '請選擇角色' }, ...roles.value] };
     }
     return field;
