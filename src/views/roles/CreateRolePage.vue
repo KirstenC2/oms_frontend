@@ -13,13 +13,13 @@
 <script setup lang="ts">
 import DynamicForm from '@/components/form/DynamicForm.vue';
 import { roleFormSchema } from '@/schemas/roleFormSchema'; // Import your role form schema
-import { createDepartment } from '@/components/utils/api'; 
+import { createRole } from '@/components/utils/api'; 
 
 
 const handleCreateRole = async (formData: Record<string, any>) => {
   console.log('Attempting to submit role data:', formData);
   try {
-    const response = await createDepartment(formData); // Execute the API call
+    const response = await createRole(formData); // Execute the API call
     console.log('Role creation successful (API layer response):', response);
     
     return response; // Return the response; DynamicForm can use this for internal success handling (e.g., clearing form fields)

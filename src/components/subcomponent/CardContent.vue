@@ -51,8 +51,8 @@ const displayFields = computed(() => {
   }
   if (props.type === 'department') {
     return {
-      ID: props.item.id,
-      Name: props.item.name,
+      // ID: props.item.id,
+      // Name: props.item.name,
       Description: props.item.description,
     }
   }

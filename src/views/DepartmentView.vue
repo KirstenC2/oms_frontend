@@ -25,8 +25,7 @@ import { ref, onMounted } from 'vue'
 import CardContent from '../components/CardContent.vue'
 import type { Field } from '@/components/form/types'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue'
-// import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
-import { fetchDepartments, createDepartment } from '@/components/utils/api'
+import { fetchDepartments } from '@/components/utils/api'
 import CreateDepartmentPage from './departments/CreateDepartmentPage.vue'
 
 const departments = ref<any[]>([])

@@ -99,7 +99,8 @@ const loadUsers = async () => {
           label: r.name,
           value: r.id
         }))
-      }
+      },
+      
     ]
     // check for listing status
     if (!users || users.length === 0) {

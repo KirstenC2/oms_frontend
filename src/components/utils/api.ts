@@ -21,3 +21,9 @@ export const deleteRole = (id: string) =>
 
 export const deleteUser = (id: string) =>
   axios.delete(`http://localhost:5001/users/${id}`) 
+
+export const deactiveUser = (id: string) =>
+  axios.patch(`http://localhost:5001/users/${id}/deactivate`) 
+
+export const activateUser = (id: string) =>
+  axios.patch(`http://localhost:5001/users/${id}/activate`)

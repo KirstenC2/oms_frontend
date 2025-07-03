@@ -9,6 +9,8 @@
         <strong>{{ key }}:</strong> {{ value }}
       </li>
       <button @click="deleteItem">Remove</button>
+      <button v-if="props.type === 'user' && props.item.status === 'ACTIVE' " @click="deactivateUser" >Deactivate</button>
+      <button v-if="props.type === 'user' && props.item.status === 'INACTIVE' " @click="activateUser" >Activate</button>
     </ul>
     <slot />
   </div>
@@ -16,7 +18,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { deleteDepartment, fetchDepartments, deleteRole, deleteUser } from './utils/api' // ✅ This is the delete API you're calling
+import { deleteDepartment, fetchDepartments, deleteRole, deleteUser, deactiveUser, activateUser as activateAPI } from './utils/api' // ✅ This is the delete API you're calling
 
 const props = defineProps<{
   item: Record<string, any>,
@@ -37,20 +39,33 @@ const title = computed(() => {
 
 const displayFields = computed(() => {
   if (props.type === 'user') {
-    console.log('User item:', props.item)
+    // console.log('User item:', props.item)
     return {
-      Name: props.item.name,
+      // Name: props.item.name,
       Email: props.item.email,
       'Department Name': props.item.department?.name,
-      Role: props.item.role?.name
+      Role: props.item.role?.name,
+      Status: props.item.status || 'N/A' // <-- Access status directly
     }
   }
-  if (props.type === 'department') {
-    return {
+ if (props.type === 'department') {
+    // This assumes your backend returns { id, name, description, userCount, manager }
+    const fields: Record<string, any> = {
       ID: props.item.id,
       Name: props.item.name,
-      Description: props.item.description,
+      // Only show description if it exists (it's optional in the schema)
+      ...(props.item.description && { Description: props.item.description }),
+      'Total Members': props.item.userCount || 0, // <-- Access userCount directly
+    };
+
+    // Add manager if available
+    if (props.item.manager && props.item.manager.name) {
+      fields['Manager'] = props.item.manager.name;
+    } else {
+      fields['Manager'] = 'N/A'; // Or leave undefined, depending on desired display
     }
+
+    return fields;
   }
   if (props.type === 'role') {
     return {
@@ -87,6 +102,29 @@ const deleteItem = async () => {
 
   } catch (err) {
     console.error('Error deleting department:', err)
+  }
+}
+
+const deactivateUser = async () => {
+  try {
+
+    console.log('Deactivating user:', props.item.id)
+    await deactiveUser(props.item.id)
+    // console.log(`User ${props.item.id} deactivated successfully.`)
+    emit('refreshRequest')
+  } catch (err) {
+    console.error('Error deactivating user:', err)
+  }
+}
+const activateUser = async () => {
+  try {
+
+    console.log('Activating user:', props.item.id)
+    await activateAPI(props.item.id)
+    // console.log(`User ${props.item.id} deactivated successfully.`)
+    emit('refreshRequest')
+  } catch (err) {
+    console.error('Error activating user:', err)
   }
 }
 </script>

@@ -17,7 +17,6 @@ import { userFormSchema } from '@/schemas/userFormSchema'; // 你的用戶 Schem
 import type { FormOption, FormSchema } from '@/types/form';
 // import { fetchDepartments, fetchRoles, createUser } from '@/api/mockService'; // 你的模擬 API 服務
 import { fetchDepartments, fetchRoles, createUser } from '@/components/utils/api';
-import axios from 'axios';
 
 const departments = ref<FormOption[]>([]);
 const roles = ref<FormOption[]>([]);
