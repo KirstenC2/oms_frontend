@@ -3,8 +3,8 @@
     <SubNavBar :tabs="departmentTabs" :view="view" @change="setView" />
 
     <h2>Departments</h2>
-    <GenericCreateForm v-if="view === 'create'" title="Create Department" :fields="deptFields"
-      :submitHandler="createDepartment" />
+    <!-- <GenericCreateForm v-if="view === 'create'" title="Create Department" :fields="deptFields"
+      :submitHandler="createDepartment" /> -->
     <div v-if="view === 'list'">
       <div v-if="loading">Loading departments...</div>
       <div v-else-if="error" style="color:red;">{{ error }}</div>
@@ -29,7 +29,7 @@ import CardContent from '../components/CardContent.vue'
 import axios from 'axios'
 import type { Field } from '@/components/form/types'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue'
-import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
+// import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
 import { fetchDepartments, createDepartment } from '@/components/utils/api'
 
 const departments = ref<any[]>([])

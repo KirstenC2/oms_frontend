@@ -3,9 +3,8 @@
     <SubNavBar :tabs="userTabs" :view="view" @change="setView" />
     <h2>Users</h2>
     <UsersUpdateForm v-if="view === 'update'" />
-    <GenericCreateForm v-else-if="view === 'create'" title="Create User" :fields="userFields"
+    <CreateUserPage v-else-if="view === 'create'" title="Create User" :fields="userFields"
       :submitHandler="createUser" />
-
     <div v-else-if="view === 'list'">
       <div v-if="loading">Loading users...</div>
       <div v-else-if="error" style="color:red;">{{ error }}</div>
@@ -30,7 +29,7 @@ import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
 import axios from 'axios'
 import type { Field } from '@/components/form/types'
 import { fetchDepartments, fetchRoles, fetchUsers, createUser } from '@/components/utils/api'
-import GenericCreateForm from '@/components/form/GenericCreateForm.vue';
+import CreateUserPage from './users/CreateUserPage.vue';
 
 
 const loading = ref(true)

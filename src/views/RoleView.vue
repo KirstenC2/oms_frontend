@@ -2,11 +2,11 @@
   <main>
     <SubNavBar :tabs="roleTabs" :view="view" @change="setView" />
     <h2>Roles</h2>
-    <GenericCreateForm v-if="view === 'create'"
-      title="Create Role"
+    <!-- <GenericCreateForm v-if="view === 'create'" -->
+      <!-- title="Create Role"
       :fields="roleFields"
       :submitHandler="createRole"
-    />
+    /> -->
     <div v-if="view === 'list'">
       <div v-if="loading">Loading roles...</div>
       <div v-else-if="error" style="color:red;">{{ error }}</div>
@@ -35,7 +35,7 @@
 import { ref, onMounted } from 'vue'
 import CardContent from '../components/CardContent.vue'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue'
-import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
+// import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
 import axios from 'axios'
 import type { Field } from '@/components/form/types'
 import { fetchRoles, createRole } from '@/components/utils/api'
