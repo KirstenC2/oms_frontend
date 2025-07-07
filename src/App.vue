@@ -10,6 +10,7 @@
         </div>
         <div v-show="isManagementOpen" class="collapsible-content">
           <RouterLink to="/users" class="nav-item">Users</RouterLink>
+          <RouterLink to="/leaves" class="nav-item">Leave Requests</RouterLink>
           <RouterLink to="/departments" class="nav-item">Departments</RouterLink>
           <RouterLink to="/roles" class="nav-item">Roles</RouterLink>
         </div>
