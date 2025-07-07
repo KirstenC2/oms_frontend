@@ -27,3 +27,7 @@ export const deactiveUser = (id: string) =>
 
 export const activateUser = (id: string) =>
   axios.patch(`http://localhost:5001/users/${id}/activate`)
+
+export const fetchLeaveRequests = () =>
+  axios.get('http://localhost:5001/leave-requests')
+
