@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import UserView from '../views/UserView.vue'
 import LeaveView from '@/views/LeaveView.vue'
+import LeaveDetailsPage from '@/views/leaves/LeaveDetailsPage.vue' // Import the new page for leave details
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,13 @@ const router = createRouter({
       path: '/leaves',
       name: 'leaves',
       component: LeaveView,
+    },
+     // The new route for individual leave details
+    {
+      path: '/leaves/:id', // `:id` is a route parameter that will capture the leave ID
+      name: 'leave-details',
+      component: LeaveDetailsPage,
+      props: true, // This is crucial: it passes the `id` route parameter as a prop to LeaveDetailsPage
     },
     {
       path: '/departments',

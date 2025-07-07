@@ -1,136 +1,197 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+// Import child components
+import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
+import CreateLeavePage from './leaves/CreateLeavePage.vue';
+import LeaveList from '@/components/Management/LeaveList.vue';
+import LeaveDetailsModal from '@/components/Management/LeaveDetailsModal.vue'; // NEW: Import the modal component
+
+// Import types and API utility functions
+import type { Field } from '@/components/form/types';
+import { fetchLeaveRequests, createLeaveRequest as apiCreateLeaveRequest, cancelLeaveRequest as apiCancelLeaveRequest } from '@/components/utils/api';
+
+// Define a type for your leave object (must match what your API returns and what modal expects)
+interface Employee {
+  name: string;
+  email: string;
+}
+
+interface LeaveRequest {
+  id: string;
+  employee: Employee;
+  type: string;
+  startDate: string;
+  endDate: string;
+  reason: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+  // ... other properties
+}
+
+// --- Reactive State ---
+const loading = ref(true);
+const error = ref<string | null>(null);
+const router = useRouter();
+
+const view = ref('list');
+const leaveList = ref<LeaveRequest[]>([]); // Type the leaveList explicitly
+
+// Modal specific state
+const isModalVisible = ref(false);
+const selectedLeaveForModal = ref<LeaveRequest | null>(null); // To hold the data for the modal
+
+// src/views/LeavePage.vue
+interface Tab { // If you define Tab here or import it
+  label: string;
+  value: string;
+  view: string; // The property that TypeScript is complaining about
+}
+
+const leaveTabs: Tab[] = [ // Explicitly typing it here for clarity
+  { label: 'Leave List', value: 'list', view: 'list' }, // Add view property
+  { label: 'Create New Leave', value: 'create', view: 'create' } // Add view property
+];
+const userFields = ref<Field[]>([
+  { id: 'employeeId', label: 'Employee ID', type: 'text', required: true },
+  { id: 'type', label: 'Leave Type', type: 'select', options: ['Annual', 'Sick', 'Personal'], required: true },
+  { id: 'startDate', label: 'Start Date', type: 'date', required: true },
+  { id: 'endDate', label: 'End Date', type: 'date', required: true },
+  { id: 'reason', label: 'Reason', type: 'textarea', required: true },
+]);
+
+// --- Component Methods ---
+
+const setView = (v: string) => {
+  view.value = v;
+  if (v === 'list') {
+    fetchData();
+  }
+};
+
+const createLeaveRequest = async (formData: any) => {
+  try {
+    console.log('Attempting to create leave request with data:', formData);
+    await apiCreateLeaveRequest(formData);
+    console.log('Leave request created successfully!');
+    alert('Leave request created successfully!');
+    setView('list');
+  } catch (err) {
+    console.error('Failed to create leave request:', err);
+    error.value = 'Failed to create leave request: ' + (err instanceof Error ? err.message : 'Unknown error');
+    alert(`Failed to create leave request: ${error.value}`);
+  }
+};
+
+const fetchData = async () => {
+  loading.value = true;
+  error.value = null;
+
+  try {
+    const response = await fetchLeaveRequests();
+    // Assuming response.data contains the array of LeaveRequest
+    leaveList.value = response.data as LeaveRequest[]; // Cast for type safety
+    if (!leaveList.value || leaveList.value.length === 0) {
+      error.value = 'No leave requests found.';
+    }
+  } catch (err) {
+    console.error('Failed to load leave requests:', err);
+    error.value = 'Failed to load leave requests. Please try again.';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleCancelLeave = async (leaveId: string) => {
+  try {
+    console.log('Handling cancel request for ID:', leaveId);
+    await apiCancelLeaveRequest(leaveId);
+    console.log('Leave request cancelled successfully!');
+    alert('Leave request cancelled successfully!');
+
+    const index = leaveList.value.findIndex(leave => leave.id === leaveId);
+    if (index !== -1) {
+      leaveList.value[index] = { ...leaveList.value[index], status: 'CANCELLED' };
+    }
+  } catch (err) {
+    console.error('Failed to cancel leave request:', err);
+    error.value = 'Failed to cancel leave request: ' + (err instanceof Error ? err.message : 'Unknown error');
+    alert(`Failed to cancel leave request: ${error.value}`);
+  }
+};
+
+// NEW: Handlers for modal
+const handleViewDetails = (leaveId: string) => {
+  const leave = leaveList.value.find(l => l.id === leaveId);
+  if (leave) {
+    selectedLeaveForModal.value = leave;
+    isModalVisible.value = true;
+  } else {
+    console.warn(`Leave with ID ${leaveId} not found for details.`);
+    // Optionally set an error or alert the user
+  }
+};
+
+const closeModal = () => {
+  isModalVisible.value = false;
+  selectedLeaveForModal.value = null; // Clear selected leave when modal closes
+};
+
+// --- Lifecycle Hook ---
+onMounted(() => {
+  fetchData();
+});
+</script>
+
 <template>
   <main>
     <SubNavBar :tabs="leaveTabs" :view="view" @change="setView" />
-    <h2>Leave</h2>
-    <!-- <UsersUpdateForm v-if="view === 'update'" />
-    <CreateUserPage v-else-if="view === 'create'" title="Create Leave" :fields="userFields"
-      :submitHandler="createUser" /> -->
-    <div v-if="view === 'list'">
-      <div v-if="loading">Loading leave request...</div>
+
+    <h2>Leave Management</h2>
+
+    <CreateLeavePage
+      v-if="view === 'create'"
+      title="Create New Leave Request"
+      :fields="userFields"
+      :submitHandler="createLeaveRequest"
+    />
+
+    <div v-else-if="view === 'list'">
+      <div v-if="loading">Loading leave requests...</div>
       <div v-else-if="error" style="color:red;">{{ error }}</div>
       <div v-else class="user-container">
-        <div v-if="leaveList.length === 0">No users found.</div>
-
-        <!-- Leave Requests Table Section -->
-        <div class="leave-section">
-          <h3>All Leave Requests</h3>
-          <table class="leave-table">
-            <thead>
-              <tr>
-                <th>Employee</th>
-                <th>Email</th>
-                <th>Type</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Reason</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="leave in leaveList" :key="leave.id">
-                <td>{{ leave.employee.name }}</td>
-                <td>{{ leave.employee.email }}</td>
-                <td>{{ leave.type }}</td>
-                <td>{{ leave.startDate }}</td>
-                <td>{{ leave.endDate }}</td>
-                <td>{{ leave.reason }}</td>
-                <td>{{ leave.status }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div v-if="leaveList.length === 0">No leave requests found.</div>
+        <LeaveList
+          v-else
+          :leaveList="leaveList"
+          @cancel-leave="handleCancelLeave"
+          @view-details="handleViewDetails" />
       </div>
-
     </div>
 
+    <LeaveDetailsModal
+      :is-visible="isModalVisible"
+      :leave="selectedLeaveForModal"
+      @close="closeModal"
+    />
   </main>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import CardContent from '../components/CardContent.vue'
-import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
-import type { Field } from '@/components/form/types'
-import { fetchLeaveRequests } from '@/components/utils/api'
-
-
-const loading = ref(true)
-const error = ref<string | null>(null)
-const router = useRouter()
-
-const view = ref('list')
-const setView = (v: string) => {
-  view.value = v
-}
-
-
-const leaveTabs = [
-  { view: 'list', label: 'Leave List' },
-  { view: 'update', label: 'Update Leave Info' },
-  { view: 'create', label: 'Create New Leave' }
-]
-
-
-function navigate(target: string) {
-  if (target === 'leaves') router.push('/leaves')
-  if (target === 'departments') router.push('/departments')
-  if (target === 'roles') router.push('/roles')
-}
-
-// function setView(target: 'list' | 'update' | 'create') {
-//   view.value = target
-// }
-
-const userFields = ref<Field[]>([])
-const leaveList = ref<any[]>([])
-
-const loadUsers = async () => {
-  loading.value = true
-  error.value = null
-  try {
-    const [leaveResponse] = await Promise.all([
-      fetchLeaveRequests()
-    ])
-
-    const leaves = leaveResponse.data
-
-    // check for listing status
-    if (!leaves || leaves.length === 0) {
-      error.value = 'No leaves found'
-    } else {
-      loading.value = false
-      leaveList.value = leaves
-    }
-  } catch (err) {
-    console.error('Failed to load leave', err)
-  }
-}
-
-onMounted(async () => {
-  loadUsers()
-  console.log('leaves loaded:', leaveList.value)
-})
-
-</script>
-
 <style scoped>
-.leave-table {
-  width: 100%;
-  margin-top: 2rem;
-  border-collapse: collapse;
-  color: cadetblue;
+main {
+  padding: 20px;
 }
 
-.leave-table th,
-.leave-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: left;
+h2 {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  color: #333;
 }
 
-.leave-table th {
-  background-color: #eee;
+.user-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>
-
