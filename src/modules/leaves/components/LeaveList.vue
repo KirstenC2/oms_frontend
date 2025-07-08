@@ -39,7 +39,6 @@ const handleCancel = (leaveId) => {
           :key="leave.id"
           :leave="leave"
           @cancel-request="handleCancel"
-          @view-details="handleViewDetails"
         />
       </tbody>
     </table>

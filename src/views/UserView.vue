@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import UsersUpdateForm from '../components/Management/UsersUpdateForm.vue';
+import UsersUpdateForm from '@/modules/users/components/UsersUpdateForm.vue';
 // import CreateFormTemplate from '../components/Management/CreateFormTemplate.vue';
 import CardContent from '../components/CardContent.vue'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue';

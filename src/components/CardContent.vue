@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { deleteDepartment } from '../modules/departments/department-api' // ✅ This is the delete API you're calling
+import { deleteDepartment } from '@/modules/departments/department-api';
 import { deleteRole } from '@/modules/users/api/role-api';
 import { deleteUser, deactiveUser, activateUser as activateAPI  } from '@/modules/users/api/user-api';
 

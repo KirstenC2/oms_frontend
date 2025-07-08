@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import UserView from '../views/UserView.vue'
 import LeaveView from '@/views/LeaveView.vue'
 import LeaveDetailsPage from '@/modules/leaves/views/LeaveDetailsPage.vue' // Import the new LeaveDetailsPage component
+import ProjectDetailsPage from '@/modules/projects/views/ProjectDetailsPage.vue'// Import the new ProjectDetailsPage component
+import ProjectView from '@/modules/projects/views/ProjectView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +48,18 @@ const router = createRouter({
       path: '/roles',
       name: 'roles',
       component: () => import('../views/RoleView.vue'),
+    },
+    {
+      path: '/projects',
+      name: 'projects',
+      component: ProjectView,
+      props: true, 
+    },
+    {
+      path: '/projects/:id', // `:id` is a route parameter that will capture the leave ID
+      name: 'project-details',
+      component: ProjectDetailsPage, // Ensure this component exists
+      props: true, // This is crucial: it passes the `id` route parameter as a prop to LeaveDetailsPage
     },
   ],
 })

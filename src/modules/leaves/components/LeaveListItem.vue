@@ -9,9 +9,6 @@ const props = defineProps<{
   leave: LeaveRequest;
 }>();
 
-// REMOVE THE EMIT DEFINITION, as it's no longer needed for navigation:
-// const emit = defineEmits<{ (e: 'view-details', leaveId: string): void; }>();
-
 const router = useRouter(); // <--- NEW: Initialize router
 
 // Computed properties to format dates (no change)
