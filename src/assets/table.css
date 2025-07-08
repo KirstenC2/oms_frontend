@@ -1,0 +1,21 @@
+.leave-section {
+  margin-top: 20px;
+}
+
+.leave-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.leave-table th,
+.leave-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  color: black;
+}
+
+.leave-table th {
+  background-color: #f2f2f2;
+}

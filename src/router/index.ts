@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import UserView from '../views/UserView.vue'
 import LeaveView from '@/views/LeaveView.vue'
-import LeaveDetailsPage from '@/views/leaves/LeaveDetailsPage.vue' // Import the new page for leave details
+import LeaveDetailsPage from '@/modules/leaves/views/LeaveDetailsPage.vue' // Import the new LeaveDetailsPage component
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

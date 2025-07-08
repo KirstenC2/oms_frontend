@@ -57,11 +57,9 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'; // Added computed
 import { useRouter } from 'vue-router';
-import '../../assets/button.css';
-// Import API functions
-import { fetchLeaveRequestsByID, cancelLeaveRequest as apiCancelLeaveRequest, approveLeaveRequest, rejectLeaveRequest } from '@/components/utils/api'; // Or your modular path
+import '@/assets/button.css'; // Import your button styles
+import { fetchLeaveRequestsByID, cancelLeaveRequest as apiCancelLeaveRequest, approveLeaveRequest, rejectLeaveRequest } from '@/modules/leaves/api/leave-api'; 
 
-// Import types
 import type { LeaveRequest } from '@/types/leave'; // Ensure this path is correct
 
 const props = defineProps({

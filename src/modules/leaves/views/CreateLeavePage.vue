@@ -9,9 +9,7 @@
                     <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
                 </select>
             </label>
-
             <br />
-
             <label>
                 Type:
                 <select v-model="leave.type" required>ß
@@ -51,10 +49,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router';
-import { createLeaveRequest, fetchUsers } from '@/components/utils/api'
-
-const router = useRouter();
+import { fetchUsers } from '@/modules/users/api/user-api'
+import { createLeaveRequest } from '@/modules/leaves/api/leave-api'
 
 const users = ref([])
 const leave = ref({

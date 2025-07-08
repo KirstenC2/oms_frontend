@@ -1,5 +1,5 @@
 <script setup>
-import LeaveListItem from './LeaveListItem.vue'; // Adjust path as needed
+import LeaveListItem from '@/modules/leaves/components/LeaveListItem.vue'; // Adjust path as needed
 
 const props = defineProps({
   leaveList: {
@@ -8,6 +8,11 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['cancel-leave']);
+
+const handleCancel = (leaveId) => {
+  emit('cancel-leave', leaveId);
+};
 </script>
 
 <template>
@@ -33,6 +38,8 @@ const props = defineProps({
           v-for="leave in leaveList"
           :key="leave.id"
           :leave="leave"
+          @cancel-request="handleCancel"
+          @view-details="handleViewDetails"
         />
       </tbody>
     </table>
@@ -62,4 +69,3 @@ const props = defineProps({
   background-color: #f2f2f2;
 }
 </style>
-

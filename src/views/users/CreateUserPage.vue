@@ -13,19 +13,19 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import DynamicForm from '@/components/form/DynamicForm.vue';
-import { userFormSchema } from '@/schemas/userFormSchema'; // 你的用戶 Schema
+import { userFormSchema } from '@/schemas/userFormSchema';
 import type { FormOption, FormSchema } from '@/types/form';
-// import { fetchDepartments, fetchRoles, createUser } from '@/api/mockService'; // 你的模擬 API 服務
-import { fetchDepartments, fetchRoles, createUser } from '@/components/utils/api';
-
+import { fetchDepartments } from '@/modules/departments/department-api';
+import { createUser} from '@/modules/users/api/user-api'; 
+import { fetchRoles } from '@/modules/users/api/role-api'; 
 const departments = ref<FormOption[]>([]);
 const roles = ref<FormOption[]>([]);
-const isLoadingOptions = ref(true); // 用於追蹤部門和角色數據是否加載完成
+const isLoadingOptions = ref(true); 
 
-// 在組件掛載時獲取部門和角色數據
+
 onMounted(async () => {
   try {
-    // 使用 Promise.all 並行獲取所有需要動態填充的選項
+    
     const [deptRes, roleRes] = await Promise.all([
       fetchDepartments(),
       fetchRoles()

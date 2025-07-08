@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { deleteDepartment, fetchDepartments, deleteRole, deleteUser } from '../utils/api' // ✅ This is the delete API you're calling
+import { deleteDepartment, fetchDepartments, deleteRole, deleteUser } from '../../modules/departments/department-api' // ✅ This is the delete API you're calling
 
 const props = defineProps<{
   item: Record<string, any>,

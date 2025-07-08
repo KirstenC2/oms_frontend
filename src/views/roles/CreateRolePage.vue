@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import DynamicForm from '@/components/form/DynamicForm.vue';
 import { roleFormSchema } from '@/schemas/roleFormSchema'; // Import your role form schema
-import { createRole } from '@/components/utils/api'; 
+import { createRole } from '@/modules/departments/department-api'; 
 
 
 const handleCreateRole = async (formData: Record<string, any>) => {
