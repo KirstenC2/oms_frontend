@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 
 // Import child components
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
@@ -9,31 +8,14 @@ import LeaveList from '@/components/Management/LeaveList.vue';
 import LeaveDetailsModal from '@/components/Management/LeaveDetailsModal.vue'; // NEW: Import the modal component
 
 // Import types and API utility functions
-import type { Field } from '@/components/form/types';
+import type { LeaveRequest, Tab, FormField } from '@/types/leave'; // Ensure this matches your API response structure
+import type { Field } from '@/components/form/types'; // Import the Field type for form fields
 import { fetchLeaveRequests, createLeaveRequest as apiCreateLeaveRequest, cancelLeaveRequest as apiCancelLeaveRequest } from '@/components/utils/api';
 
-// Define a type for your leave object (must match what your API returns and what modal expects)
-interface Employee {
-  name: string;
-  email: string;
-}
-
-interface LeaveRequest {
-  id: string;
-  employee: Employee;
-  type: string;
-  startDate: string;
-  endDate: string;
-  reason: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
-  // ... other properties
-}
 
 // --- Reactive State ---
 const loading = ref(true);
 const error = ref<string | null>(null);
-const router = useRouter();
-
 const view = ref('list');
 const leaveList = ref<LeaveRequest[]>([]); // Type the leaveList explicitly
 
@@ -41,18 +23,11 @@ const leaveList = ref<LeaveRequest[]>([]); // Type the leaveList explicitly
 const isModalVisible = ref(false);
 const selectedLeaveForModal = ref<LeaveRequest | null>(null); // To hold the data for the modal
 
-// src/views/LeavePage.vue
-interface Tab { // If you define Tab here or import it
-  label: string;
-  value: string;
-  view: string; // The property that TypeScript is complaining about
-}
-
 const leaveTabs: Tab[] = [ // Explicitly typing it here for clarity
   { label: 'Leave List', value: 'list', view: 'list' }, // Add view property
   { label: 'Create New Leave', value: 'create', view: 'create' } // Add view property
 ];
-const userFields = ref<Field[]>([
+const userFields = ref<FormField[]>([
   { id: 'employeeId', label: 'Employee ID', type: 'text', required: true },
   { id: 'type', label: 'Leave Type', type: 'select', options: ['Annual', 'Sick', 'Personal'], required: true },
   { id: 'startDate', label: 'Start Date', type: 'date', required: true },

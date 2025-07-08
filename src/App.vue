@@ -35,7 +35,7 @@
 import { ref } from 'vue'; // Import ref for state management
 import { RouterLink, RouterView } from 'vue-router';
 import Title from './components/Title.vue';
-
+import './assets/button.css'
 // State variables to control the visibility of each section
 const isManagementOpen = ref(true); // Start with Management section open by default
 const isProjectOpen = ref(true);    // Start with Project section open by default
