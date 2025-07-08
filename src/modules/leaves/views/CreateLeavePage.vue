@@ -9,16 +9,14 @@
                     <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
                 </select>
             </label>
-
             <br />
-
             <label>
                 Type:
                 <select v-model="leave.type" required>ß
                     <option value="">-- Select Type --</option>
-                    <option>Annual Leave</option>
-                    <option>Sick Leave</option>
-                    <option>Unpaid Leave</option>
+                    <option v-for="option in LEAVE_TYPE_OPTIONS" :key="option.value" :value="option.value">
+                        {{ option.text }}
+                    </option>
                 </select>
             </label>
             <br />
@@ -51,10 +49,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router';
-import { createLeaveRequest, fetchUsers } from '@/components/utils/api'
-
-const router = useRouter();
+import { fetchUsers } from '@/modules/users/api/user-api'
+import { createLeaveRequest } from '@/modules/leaves/api/leave-api'
+import { LEAVE_TYPE_OPTIONS } from '@/modules/leaves/utils/leave-constants'
 
 const users = ref([])
 const leave = ref({
@@ -95,7 +92,7 @@ const handleSubmit = async () => {
 
         successMessage.value = 'Leave request submitted successfully!'
         errorMessage.value = ''
-        
+
         payload = {
             employeeId: '',
             type: '',

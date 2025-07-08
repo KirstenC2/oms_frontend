@@ -35,7 +35,7 @@ import SubNavBar from '@/components/subcomponent/SubNavBar.vue'
 // import GenericCreateForm from '@/components/form/GenericCreateForm.vue'
 import axios from 'axios'
 import type { Field } from '@/components/form/types'
-import { fetchRoles, createRole } from '@/components/utils/api'
+import { fetchRoles, createRole } from '@/modules/users/api/role-api'
 import CreateRolePage from './roles/CreateRolePage.vue'
 
 const roles = ref<any[]>([])

@@ -1,0 +1,74 @@
+.leave-section {
+  margin-top: 20px;
+}
+
+.leave-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.leave-table th,
+.leave-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  color: black;
+}
+
+.leave-table th {
+  background-color: #f2f2f2;
+}
+
+table {
+  color:black;
+}
+
+.project-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.project-table th,
+.project-table td {
+  border: 1px solid #e0e0e0;
+  padding: 12px 15px;
+  text-align: left;
+  color: #333;
+  font-size: 0.95em;
+}
+
+.project-table th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  color: #555;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.project-table tbody tr:nth-child(even) {
+  background-color: #fdfdfd;
+}
+
+.project-table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer; /* Indicate rows are clickable, if you add row click functionality */
+}
+
+/* Status Badges - Reusing styles from ProjectsView */
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+  text-transform: uppercase;
+  white-space: nowrap; /* Prevent status text from wrapping */
+}
+
+.status-badge.not_started { background-color: #6c757d; } /* Gray */
+.status-badge.in_progress { background-color: #007bff; }  /* Blue */
+.status-badge.completed { background-color: #28a745; }   /* Green */
+.status-badge.on_hold { background-color: #ffc107; color: #333; }      /* Yellow */
+.status-badge.cancelled { background-color: #dc3545; }   /* Red */

@@ -1,29 +1,31 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { LeaveRequest } from '@/types/leave'; // Adjust path if needed
-import '../../assets/button.css'; // Import your button styles
+import { useRouter } from 'vue-router'; // <--- NEW IMPORT: Import useRouter
+import type { LeaveRequest } from '@/modules/leaves/types/leave-types'; // VERIFY THIS PATH
+import '@/assets/button.css';
+import '@/assets/table.css';
+
 const props = defineProps<{
   leave: LeaveRequest;
 }>();
 
-const emit = defineEmits<{
-  (e: 'view-details', leaveId: string): void;
-  // No more 'cancel' emit from here, as it's handled in the modal
-}>();
+const router = useRouter(); // <--- NEW: Initialize router
 
-// Computed properties to format dates
+// Computed properties to format dates (no change)
 const formattedStartDate = computed(() => {
   if (!props.leave.startDate) return '';
-  return new Date(props.leave.startDate).toLocaleDateString(); // Or use a more specific date formatter
+  return new Date(props.leave.startDate).toLocaleDateString();
 });
 
 const formattedEndDate = computed(() => {
   if (!props.leave.endDate) return '';
-  return new Date(props.leave.endDate).toLocaleDateString(); // Or use a more specific date formatter
+  return new Date(props.leave.endDate).toLocaleDateString();
 });
 
 const onViewDetailsClick = () => {
-  emit('view-details', props.leave.id);
+  console.log('LeaveListItem: Navigating to LeaveDetailsPage for ID:', props.leave.id);
+  // Use router.push to navigate to the named route, passing the ID as a parameter
+  router.push({ name: 'leave-details', params: { id: props.leave.id } });
 };
 </script>
 
@@ -39,7 +41,6 @@ const onViewDetailsClick = () => {
     <td>{{ formattedStartDate }} - {{ formattedEndDate }}</td>
     <td>
       <button class="view-details-btn" @click.stop="onViewDetailsClick">View Details</button>
-      </td>
+    </td>
   </tr>
 </template>
-

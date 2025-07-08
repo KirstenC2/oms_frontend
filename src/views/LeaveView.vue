@@ -3,15 +3,13 @@ import { ref, onMounted } from 'vue';
 
 // Import child components
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
-import CreateLeavePage from './leaves/CreateLeavePage.vue';
-import LeaveList from '@/components/Management/LeaveList.vue';
-import LeaveDetailsModal from '@/components/Management/LeaveDetailsModal.vue'; // NEW: Import the modal component
+import CreateLeavePage from '@/modules/leaves/views/CreateLeavePage.vue';
+import LeaveList from '@/modules/leaves/components/LeaveList.vue';
+import LeaveDetailsModal from '@/modules/leaves/components/LeaveDetailsModal.vue';
 
 // Import types and API utility functions
 import type { LeaveRequest, Tab, FormField } from '@/types/leave'; // Ensure this matches your API response structure
-import type { Field } from '@/components/form/types'; // Import the Field type for form fields
-import { fetchLeaveRequests, createLeaveRequest as apiCreateLeaveRequest, cancelLeaveRequest as apiCancelLeaveRequest } from '@/components/utils/api';
-
+import { fetchLeaveRequests, createLeaveRequest as apiCreateLeaveRequest, cancelLeaveRequest as apiCancelLeaveRequest } from '@/modules/leaves/api/leave-api'; // Import the API functions
 
 // --- Reactive State ---
 const loading = ref(true);
@@ -95,8 +93,9 @@ const handleCancelLeave = async (leaveId: string) => {
   }
 };
 
-// NEW: Handlers for modal
+
 const handleViewDetails = (leaveId: string) => {
+  console.log('Handling view details for ID:', leaveId);
   const leave = leaveList.value.find(l => l.id === leaveId);
   if (leave) {
     selectedLeaveForModal.value = leave;

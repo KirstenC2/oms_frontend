@@ -13,7 +13,7 @@
 <script setup lang="ts">
 import DynamicForm from '@/components/form/DynamicForm.vue';
 import { departmentFormSchema } from '@/schemas/departmentFormSchema'; // Import your department form schema
-import { createDepartment } from '@/components/utils/api'; 
+import { createDepartment } from '@/modules/departments/department-api'; 
 
 
 const handleCreateDepartment = async (formData: Record<string, any>) => {

@@ -1,5 +1,5 @@
 <script setup>
-import LeaveListItem from './LeaveListItem.vue'; // Adjust path as needed
+import LeaveListItem from '@/modules/leaves/components/LeaveListItem.vue'; // Adjust path as needed
 
 const props = defineProps({
   leaveList: {
