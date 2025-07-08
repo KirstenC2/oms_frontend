@@ -51,10 +51,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router';
 import { createLeaveRequest, fetchUsers } from '@/components/utils/api'
 
-const users = ref([])
+const router = useRouter();
 
+const users = ref([])
 const leave = ref({
     employeeId: '',
     type: '',
@@ -83,7 +85,7 @@ onMounted(async () => {
 
 const handleSubmit = async () => {
     try {
-        const payload = {
+        let payload = {
             ...leave.value,
             startDate: new Date(leave.value.startDate).toISOString(),
             endDate: new Date(leave.value.endDate).toISOString()
@@ -93,6 +95,16 @@ const handleSubmit = async () => {
 
         successMessage.value = 'Leave request submitted successfully!'
         errorMessage.value = ''
+        
+        payload = {
+            employeeId: '',
+            type: '',
+            startDate: '',
+            endDate: '',
+            reason: ''
+        } // Reset form
+        leave.value = payload
+
     } catch (err: any) {
         errorMessage.value = err.response?.data?.message || 'Failed to submit leave request'
         successMessage.value = ''

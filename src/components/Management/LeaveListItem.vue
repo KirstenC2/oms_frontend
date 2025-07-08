@@ -62,7 +62,6 @@ const formattedEndDate = computed(() => {
     <td>{{ props.leave.status }}</td>
     <td>{{ formattedStartDate }} - {{ formattedEndDate }}</td> <td>
       <button class="view-details-btn" @click.stop="onViewDetailsClick">View Details</button>
-      <button v-if="props.leave.status === 'PENDING'" @click.stop="onCancelClick">Cancel</button>
     </td>
   </tr>
 </template>
