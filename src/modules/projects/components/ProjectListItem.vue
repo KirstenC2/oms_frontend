@@ -10,8 +10,7 @@ const props = defineProps<{
   projects: Projects;
 }>();
 
-const router = useRouter(); // <--- NEW: Initialize router
-
+const router = useRouter(); 
 // Computed properties to format dates (no change)
 const formattedStartDate = computed(() => {
   if (!props.projects.startDate) return '';

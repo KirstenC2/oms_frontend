@@ -22,8 +22,16 @@
             <button @click="goBack" class="back-button">Go Back to List</button>
             <button @click="handleRemoveProject">Remove project</button>
         </div>
+    </div>
+    <div>
+        <div v-if="loading" class="page-loading-message">載入專案數據中...</div>
+        <div v-else-if="error" class="page-error-message">錯誤: {{ error }}</div>
+        <div v-else-if="!projectList" class="page-not-found">找不到該專案。</div>
+        <div v-else>
+            <ProjectTaskItem :projects="[projectList]" :loading="loading" :error="error" />
+            <!-- <ProjectGantt v-if="projectList" :projects="[projectList]" /> -->
 
-
+        </div>
     </div>
 </template>
 
@@ -34,10 +42,16 @@ import '@/assets/button.css'; // Import your button styles
 import type { Projects } from '@/modules/projects/types/project-types'; // Adjust the import path as needed
 import { deleteProjectByID, fetchProjectsByID } from '../api/project-api';
 import { errorMessages } from 'vue/compiler-sfc';
+import ProjectGantt from '../components/ProjectGantt.vue';
+import ProjectTaskItem from '../components/ProjectTaskItem.vue';
 const props = defineProps({
     id: {
         type: String,
         required: true,
+    },
+    projects: {
+        type: Array as () => Projects[],
+        default: () => [],
     },
 });
 
@@ -101,7 +115,7 @@ const handleRemoveProject = async () => {
         await deleteProjectByID(projectList.value.id); // Assuming this function deletes the project
         console.log(`Project with ID ${projectList.value.id} has been removed.`);
         router.back(); // Redirect to the project list after deletion
-    
+
     } catch (error) {
         console.error('Failed to remove project:', error);
         // errorMessages = 'Failed to remove project. Please try again.';
