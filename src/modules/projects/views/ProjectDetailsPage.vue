@@ -27,7 +27,7 @@
         <div v-else-if="!projectList" class="page-not-found">找不到該專案。</div>
         <div v-else>
             <ProjectTaskItem :projects="[projectList]" :loading="loading" :error="error"
-                @task-created="handleTaskCreated" @update-task-status="handleUpdateTaskStatus" />
+                @task-created="handleTaskCreated" @update-task-status="handleUpdateTaskStatus" @update-issue-status="handleUpdateIssueStatus" />
         </div>
         
     </div>
@@ -40,8 +40,10 @@ import '@/assets/button.css'; // Import your button styles
 import type { Projects } from '@/modules/projects/types/project-types'; // Adjust the import path as needed
 import { deleteProjectByID, fetchProjectsByID } from '../api/project-api';
 import { updateTaskStatus } from '../api/task-api'; // Import the API function for updating task statu
+import { updateIssueStatus } from '../api/issue-api'; // Import the API function for updating issue status
 import ProjectTaskItem from '../components/ProjectTaskItem.vue';
 import ItemList from '../components/ItemList.vue'; // Import the ItemList component
+import type { IssueStatus } from '../types/issue-type'; // Import the IssueStatus type
 const props = defineProps({
     id: {
         type: String,
@@ -68,6 +70,12 @@ const handleTaskCreated = (task: any) => {
 const handleUpdateTaskStatus = (taskId: string, status: string) => {
     console.log(`Task with ID ${taskId} status updated to ${status}`);
     updateTaskStatus(taskId, status);
+};
+
+const handleUpdateIssueStatus = (issueId: string, newStatus: IssueStatus) => {
+    console.log(`Issue with ID ${issueId} status updated to ${newStatus}`);
+    const res = updateIssueStatus(issueId, newStatus);
+    console.log('Issue status update response:', res);
 };
 
 // Function to fetch details based on the ID

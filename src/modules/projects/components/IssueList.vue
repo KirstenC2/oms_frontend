@@ -18,7 +18,9 @@ const issueList = ref<Issues[]>([]); // Define a ref to hold the list of issues
 issueList.value = props.projects.flatMap(project => project.issues || []); // Flatten the issues from all projects
 
 // Define emits for actions, e.g., for handling a delete or cancel action
-const emit = defineEmits(['delete-issue']); // Renamed from cancel-issue to delete-issue
+const emit = defineEmits(['delete-issue', 'update-issue-status']);
+  
+  
 console.log('IssueList component initialized with projects:', issueList.value);
 // Function to handle the delete action
 const handleDelete = (projectId: string) => {
@@ -31,6 +33,11 @@ const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   // Example: "2025年8月1日"
   return date.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
+};
+
+const handleUpdateIssueStatus = (issueId: string, newStatus: IssueStatus) => {
+  console.log(`IssueList: Emitting update-issue-status for Issue ID: ${issueId}, New Status: ${newStatus}`);
+  emit('update-issue-status', issueId, newStatus);
 };
 
 // Helper function to format status for display
@@ -83,6 +90,7 @@ const getManagerEmail = (manager: User | null): string => {
           :loading="false"
           :projects="projects"
           @delete-issue="handleDelete(issue.id)"
+          @update-issue-status="handleUpdateIssueStatus"
         />
 
         <!-- <tr v-for="issue in issueList" :key="issue.id">

@@ -74,7 +74,7 @@
     <CreateTaskPage :projectId="projects[0].id" @task-created="handleTaskCreated" />
   </div>
   <div v-else-if="view === 'issueList'" class="task-table-container">
-    <IssueList :projects="projects" @task-created="handleTaskCreated" @update-task-status="handleStatusChange" />
+    <IssueList :projects="projects" @update-task-status="handleStatusChange" @update-issue-status="handleIssueStatusChange"/>
   </div>
 
 </template>
@@ -87,6 +87,8 @@ import { ProjectStatus, TaskStatus } from '@/modules/projects/types/project-type
 import type { Projects, Task } from '@/modules/projects/types/project-types';
 import CreateTaskPage from '../views/CreateTaskPage.vue';
 import IssueList from './IssueList.vue';
+import { updateIssueStatus } from '../api/issue-api';
+import type { IssueStatus } from '../types/issue-type';
 
 const props = defineProps<{
   projects: Projects[]; // Expecting an array of Projects (singular type)
@@ -97,6 +99,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (event: 'task-created', task: Task): void; // Emit event when a task is created
   (event: 'update-task-status', taskId: string, status: TaskStatus): void; // Emit event when task status changes
+  (event: 'update-issue-status', issueId: string, newStatus: IssueStatus): void; // Emit event when issue status changes
 }>();
 
 
@@ -124,6 +127,11 @@ const handleTaskCreated = (task: Task) => {
 const handleStatusChange = (taskId: string, newStatus: TaskStatus) => {
   console.log(`TaskTable: Emitting update-task-status for Task ID: ${taskId}, New Status: ${newStatus}`);
   emit('update-task-status', taskId, newStatus);
+};
+
+const handleIssueStatusChange = (issueId: string, newStatus: IssueStatus) => {
+  console.log(`ProjectTaskItem: Emitting update-issue-status for Task ID: ${issueId}, New Status: ${newStatus}`);
+  emit('update-issue-status', issueId, newStatus);
 };
 const formatTaskStatus = (status: TaskStatus): string => {
   switch (status) {
