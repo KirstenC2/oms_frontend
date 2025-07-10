@@ -12,11 +12,11 @@
         <textarea id="description" v-model="task.description" placeholder="輸入任務描述..."></textarea>
       </div>
 
-      <div class="form-group">
+      <!-- <div class="form-group">
         <label for="projectId">所屬專案 ID:</label>
         <input type="text" id="projectId" v-model="task.projectId" required placeholder="輸入任務所屬專案的 ID" />
         <small>(此任務將屬於此專案)</small>
-      </div>
+      </div> -->
 
       <div class="form-group">
         <label for="startDate">開始日期時間:</label>
@@ -62,6 +62,12 @@ import { TaskStatus } from '@/modules/projects/types/project-types'; // Adjust p
 import type { TaskFormState } from '@/modules/projects/types/project-types'; // Import Task type
 import { createTask } from '@/modules/projects/api/project-api'; // Adjust path to your API function
 
+const props = defineProps<{
+  projectId: string; // Expecting a project ID to associate the task with
+}>();
+
+
+
 // Options for the Task Status dropdown
 const TASK_STATUS_OPTIONS = [
   { value: TaskStatus.NOT_STARTED, text: '未開始' },
@@ -86,6 +92,10 @@ const isSubmitting = ref(false);
 const successMessage = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 
+const emit = defineEmits<{
+  (event: 'task-created', task: TaskFormState): void; // Emit event when task is created
+}>();
+
 const handleSubmit = async () => {
   isSubmitting.value = true;
   successMessage.value = null;
@@ -98,11 +108,13 @@ const handleSubmit = async () => {
       startDate: new Date(task.value.startDate).toISOString(),
       endDate: new Date(task.value.endDate).toISOString()
     }
-
+    // console.log("props:", props.projectId);
+    // payload.projectId = props.projectId;
+    console.log("payload:", payload);
     if (typeof payload.assignedToId === 'string' && payload.assignedToId.trim() === '') {
       payload.assignedToId = undefined;
     }
-
+    payload.projectId = props.projectId; // Ensure projectId is set from props
     // CRITICAL: Ensure projectId is not empty
     if (!payload.projectId) {
       throw new Error('請輸入任務所屬的專案 ID。');
@@ -119,7 +131,7 @@ const handleSubmit = async () => {
 
     successMessage.value = '任務已成功建立！';
     errorMessage.value = null;
-
+    
     // Reset form fields after successful submission
     task.value = {
       projectId: '',
@@ -130,6 +142,10 @@ const handleSubmit = async () => {
       status: TaskStatus.NOT_STARTED,
       assignedToId: undefined,
     };
+
+    // Emit event to notify parent component
+    emit('task-created', payload);
+    console.log('event emitted');
 
   } catch (err: any) {
     console.error('提交任務請求失敗:', err);

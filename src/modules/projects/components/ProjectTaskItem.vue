@@ -58,7 +58,7 @@
           </tr>
         </tbody>
       </table>
-        <CreateTaskPage :projectId="projects[0].id" />
+        <CreateTaskPage :projectId="projects[0].id" @task-created="handleTaskCreated" />
     </div>
   </div>
 </template>
@@ -75,14 +75,22 @@ const props = defineProps<{
   error: string | null;  // Pass error state from parent
 }>();
 
+const emit = defineEmits<{
+  (event: 'task-created', task: Task): void; // Emit event when a task is created
+}>();
+
 // --- Reactive State for Filtering and Sorting ---
 // CRITICAL FIX 1: Type filterStatus to allow TaskStatus values or an empty string
 const filterStatus = ref<TaskStatus | ''>(''); // Allows enum values or an empty string
-
 const sortBy = ref<string>('startDate');
 const sortOrder = ref<'asc' | 'desc'>('asc');
 
 // --- Derived State (Computed Properties) ---
+
+const handleTaskCreated = (task: Task) => {
+  console.log('Task created:', task);
+  emit('task-created', task); // Emit event to parent component
+};
 
 // Flatten all tasks from all projects into a single array
 const allTasks = computed<Task[]>(() => {

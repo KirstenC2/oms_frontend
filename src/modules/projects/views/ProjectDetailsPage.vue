@@ -28,8 +28,7 @@
         <div v-else-if="error" class="page-error-message">錯誤: {{ error }}</div>
         <div v-else-if="!projectList" class="page-not-found">找不到該專案。</div>
         <div v-else>
-            <ProjectTaskItem :projects="[projectList]" :loading="loading" :error="error" />
-            <!-- <ProjectGantt v-if="projectList" :projects="[projectList]" /> -->
+            <ProjectTaskItem :projects="[projectList]" :loading="loading" :error="error" @task-created="handleTaskCreated"/>
 
         </div>
     </div>
@@ -41,8 +40,6 @@ import { useRouter } from 'vue-router';
 import '@/assets/button.css'; // Import your button styles
 import type { Projects } from '@/modules/projects/types/project-types'; // Adjust the import path as needed
 import { deleteProjectByID, fetchProjectsByID } from '../api/project-api';
-import { errorMessages } from 'vue/compiler-sfc';
-import ProjectGantt from '../components/ProjectGantt.vue';
 import ProjectTaskItem from '../components/ProjectTaskItem.vue';
 const props = defineProps({
     id: {
@@ -60,6 +57,12 @@ const router = useRouter();
 const projectList = ref<Projects | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
+
+const handleTaskCreated = (task: any) => {
+    console.log('Task created:', task);
+    // Optionally, you can refresh the project details or perform other actions
+    fetchDetails(props.id); // Refresh project details after task creation
+};
 
 // Function to fetch details based on the ID
 const fetchDetails = async (id: string) => {
