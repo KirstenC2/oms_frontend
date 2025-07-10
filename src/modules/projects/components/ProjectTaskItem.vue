@@ -1,5 +1,7 @@
 <template>
-  <div class="task-table-container">
+  <SubNavBar :tabs="projectTabs" :view="view" @change="setView" />
+
+  <div v-if="view === 'list'" class="task-table-container">
     <h2>Project Tasks</h2>
 
     <div v-if="loading" class="loading-message">
@@ -51,20 +53,29 @@
             <td>{{ formatDateFull(task.startDate) }}</td>
             <td>{{ formatDateFull(task.endDate) }}</td>
             <td>
-              <span :class="`status-badge status-${task.status.toLowerCase().replace('_', '-')}`">
-                {{ formatStatus(task.status) }}
-              </span>
+              <select :value="task.status" @change="handleStatusChange(task.id, $event.target.value as TaskStatus)"
+                class="status-select">
+                <option v-for="statusOption in Object.values(TaskStatus)" :key="statusOption" :value="statusOption">
+                  {{ formatTaskStatus(statusOption) }}
+                </option>
+              </select>
             </td>
           </tr>
         </tbody>
       </table>
-        <CreateTaskPage :projectId="projects[0].id" @task-created="handleTaskCreated" />
+
     </div>
+
+  </div>
+  <div v-else-if="view === 'create'" class="task-table-container">
+    <CreateTaskPage :projectId="projects[0].id" @task-created="handleTaskCreated" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
+import type { Tab } from '@/types/leave'
 import { ProjectStatus, TaskStatus } from '@/modules/projects/types/project-types';
 import type { Projects, Task } from '@/modules/projects/types/project-types';
 import CreateTaskPage from '../views/CreateTaskPage.vue';
@@ -77,19 +88,43 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (event: 'task-created', task: Task): void; // Emit event when a task is created
+  (event: 'update-task-status', taskId: string, status: TaskStatus): void; // Emit event when task status changes
 }>();
 
-// --- Reactive State for Filtering and Sorting ---
-// CRITICAL FIX 1: Type filterStatus to allow TaskStatus values or an empty string
+
 const filterStatus = ref<TaskStatus | ''>(''); // Allows enum values or an empty string
 const sortBy = ref<string>('startDate');
 const sortOrder = ref<'asc' | 'desc'>('asc');
+const view = ref('list');
+
+const projectTabs: Tab[] = [
+  { label: 'List', value: 'list', view: 'list' },
+  { label: 'Create Task', value: 'create', view: 'create' },
+];
+
+
+const setView = (v: string) => {
+  view.value = v;
+};
 
 // --- Derived State (Computed Properties) ---
-
 const handleTaskCreated = (task: Task) => {
   console.log('Task created:', task);
   emit('task-created', task); // Emit event to parent component
+};
+const handleStatusChange = (taskId: string, newStatus: TaskStatus) => {
+  console.log(`TaskTable: Emitting update-task-status for Task ID: ${taskId}, New Status: ${newStatus}`);
+  emit('update-task-status', taskId, newStatus);
+};
+const formatTaskStatus = (status: TaskStatus): string => {
+  switch (status) {
+    case TaskStatus.NOT_STARTED: return '未開始';
+    case TaskStatus.IN_PROGRESS: return '進行中';
+    case TaskStatus.COMPLETED: return '已完成';
+    case TaskStatus.ON_HOLD: return '暫停';
+    case TaskStatus.CANCELLED: return '已取消';
+    default: return status;
+  }
 };
 
 // Flatten all tasks from all projects into a single array
@@ -179,7 +214,8 @@ const setSortBy = (column: string) => {
 
 <style scoped>
 .task-table-container {
-  max-width: 1000px; /* Adjusted for a wider table view */
+  max-width: 1000px;
+  /* Adjusted for a wider table view */
   margin: 30px auto;
   padding: 25px;
   background-color: #ffffff;
@@ -211,13 +247,17 @@ h2 {
 
 .controls {
   display: flex;
-  justify-content: flex-end; /* Align to the right */
-  gap: 20px; /* Space between filter and sort groups */
+  justify-content: flex-end;
+  /* Align to the right */
+  gap: 20px;
+  /* Space between filter and sort groups */
   margin-bottom: 25px;
-  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  flex-wrap: wrap;
+  /* Allow wrapping on smaller screens */
 }
 
-.filter-group, .sort-group {
+.filter-group,
+.sort-group {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -259,7 +299,8 @@ select {
   margin-top: 20px;
   background-color: #fff;
   border-radius: 8px;
-  overflow: hidden; /* Ensures rounded corners apply to content */
+  overflow: hidden;
+  /* Ensures rounded corners apply to content */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -275,7 +316,8 @@ select {
   color: #495057;
   font-weight: 600;
   cursor: pointer;
-  user-select: none; /* Prevent text selection on header clicks */
+  user-select: none;
+  /* Prevent text selection on header clicks */
   transition: background-color 0.2s ease;
 }
 
@@ -307,9 +349,30 @@ select {
   min-width: 80px;
 }
 
-.status-not-started { background-color: #9da3ab; } /* Gray */
-.status-in-progress { background-color: #20a8d8; } /* Blue */
-.status-completed { background-color: #4dbd74; } /* Green */
-.status-on-hold { background-color: #ffc107; color: #333; } /* Yellow (with dark text) */
-.status-cancelled { background-color: #f86c6b; } /* Red */
+.status-not-started {
+  background-color: #9da3ab;
+}
+
+/* Gray */
+.status-in-progress {
+  background-color: #20a8d8;
+}
+
+/* Blue */
+.status-completed {
+  background-color: #4dbd74;
+}
+
+/* Green */
+.status-on-hold {
+  background-color: #ffc107;
+  color: #333;
+}
+
+/* Yellow (with dark text) */
+.status-cancelled {
+  background-color: #f86c6b;
+}
+
+/* Red */
 </style>

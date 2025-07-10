@@ -1,3 +1,38 @@
+
+<template>
+  <main>
+    <SubNavBar :tabs="leaveTabs" :view="view" @change="setView" />
+
+    <h2>Leave Management</h2>
+
+    <CreateLeavePage
+      v-if="view === 'create'"
+      title="Create New Leave Request"
+      :fields="userFields"
+      :submitHandler="createLeaveRequest"
+    />
+
+    <div v-else-if="view === 'list'">
+      <div v-if="loading">Loading leave requests...</div>
+      <div v-else-if="error" style="color:red;">{{ error }}</div>
+      <div v-else class="user-container">
+        <div v-if="leaveList.length === 0">No leave requests found.</div>
+        <LeaveList
+          v-else
+          :leaveList="leaveList"
+          @cancel-leave="handleCancelLeave"
+          @view-details="handleViewDetails" />
+      </div>
+    </div>
+
+    <LeaveDetailsModal
+      :is-visible="isModalVisible"
+      :leave="selectedLeaveForModal"
+      @close="closeModal"
+    />
+  </main>
+</template>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 
@@ -117,39 +152,6 @@ onMounted(() => {
 });
 </script>
 
-<template>
-  <main>
-    <SubNavBar :tabs="leaveTabs" :view="view" @change="setView" />
-
-    <h2>Leave Management</h2>
-
-    <CreateLeavePage
-      v-if="view === 'create'"
-      title="Create New Leave Request"
-      :fields="userFields"
-      :submitHandler="createLeaveRequest"
-    />
-
-    <div v-else-if="view === 'list'">
-      <div v-if="loading">Loading leave requests...</div>
-      <div v-else-if="error" style="color:red;">{{ error }}</div>
-      <div v-else class="user-container">
-        <div v-if="leaveList.length === 0">No leave requests found.</div>
-        <LeaveList
-          v-else
-          :leaveList="leaveList"
-          @cancel-leave="handleCancelLeave"
-          @view-details="handleViewDetails" />
-      </div>
-    </div>
-
-    <LeaveDetailsModal
-      :is-visible="isModalVisible"
-      :leave="selectedLeaveForModal"
-      @close="closeModal"
-    />
-  </main>
-</template>
 
 <style scoped>
 main {

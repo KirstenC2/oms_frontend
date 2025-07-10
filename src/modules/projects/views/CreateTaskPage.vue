@@ -60,8 +60,8 @@
 import { ref } from 'vue';
 import { TaskStatus } from '@/modules/projects/types/project-types'; // Adjust path to your enums
 import type { TaskFormState } from '@/modules/projects/types/project-types'; // Import Task type
-import { createTask } from '@/modules/projects/api/project-api'; // Adjust path to your API function
-
+import { createTask } from '@/modules/projects/api/task-api'; // Adjust path to your API function
+import '@/assets/form.css'; // Import your button styles
 const props = defineProps<{
   projectId: string; // Expecting a project ID to associate the task with
 }>();
@@ -156,112 +156,16 @@ const handleSubmit = async () => {
   }
 };
 </script>
-
 <style scoped>
+
 .create-task-form {
-  background: #f0f8ff;
-  padding: 30px;
-  border-radius: 10px;
-  max-width: 550px;
-  margin: 30px auto;
-  color: #333;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-  text-align: center;
-  color: #0056b3;
-  margin-bottom: 25px;
-  font-size: 1.8em;
-}
-
-.form-group {
-  margin-bottom: 18px;
-}
-
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-  color: #555;
-}
-
-input[type="text"],
-input[type="datetime-local"],
-textarea,
-select {
-  width: calc(100% - 24px); /* Account for padding and border */
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1em;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-input[type="text"]:focus,
-input[type="datetime-local"]:focus,
-textarea:focus,
-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
-  outline: none;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 90px;
-}
-
-small {
-  color: #888;
-  font-size: 0.85em;
-  margin-top: 5px;
-  display: block;
-}
-
-button[type="submit"] {
-  padding: 12px 25px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1em;
-  font-weight: bold;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  width: 100%;
-  margin-top: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-button[type="submit"]:hover:not(:disabled) {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-}
-
-button[type="submit"]:disabled {
-  background-color: #a0c8f5;
-  cursor: not-allowed;
-}
-
-.message {
-  margin-top: 20px;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.success-message {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 40px auto;
+  color: #34495e;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e6ed;
 }
 </style>
