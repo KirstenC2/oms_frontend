@@ -1,0 +1,144 @@
+/* --- Global Form Elements Styling --- */
+
+/* Basic reset/sizing for consistency */
+input, textarea, select, button {
+  font-family: inherit; /* Inherit font from body/root for consistency */
+  font-size: 100%;     /* Ensure form elements don't shrink font size */
+  line-height: 1.15;   /* Consistent line height */
+  margin: 0;           /* Remove default margins */
+  box-sizing: border-box; /* Include padding and border in element's total width/height */
+}
+
+/* Common form group spacing */
+.form-group {
+  margin-bottom: 25px; /* Consistent spacing between form groups */
+}
+
+/* Labels */
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #34495e;
+  font-size: 0.95em;
+}
+
+/* Input (text, datetime-local), Textarea, Select Base Styles */
+input[type="text"],
+input[type="datetime-local"],
+textarea,
+select {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #cad3dd; /* Lighter, softer border */
+  border-radius: 8px; /* Slightly more rounded inputs */
+  font-size: 1.05em; /* Slightly larger font inside inputs */
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #f8fbfd; /* Very light background for inputs */
+  color: #34495e;
+}
+
+/* Focus States for Inputs */
+input[type="text"]:focus,
+input[type="datetime-local"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #4a90e2; /* Clearer focus border color */
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.25); /* More prominent, softer focus shadow */
+  outline: none;
+  background-color: #ffffff; /* White background on focus */
+}
+
+/* Textarea specific styles */
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Small hint/help text */
+small {
+  color: #7f8c8d;
+  font-size: 0.8em;
+  margin-top: 6px;
+  display: block;
+  line-height: 1.4;
+}
+
+/* Submit Button Styles */
+button[type="submit"] {
+  padding: 15px 30px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: 700;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  margin-top: 30px;
+  box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background-color: #2980b9;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+}
+
+button[type="submit"]:disabled {
+  background-color: #aeb6bf;
+  color: #e0e6ed;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+/* Message Box Styles (Success/Error) */
+.message {
+  margin-top: 30px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.95em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.success-message {
+  background-color: #e6ffee;
+  color: #27ae60;
+  border: 1px solid #a9dfbf;
+}
+
+.error-message {
+  background-color: #ffe6e6;
+  color: #e74c3c;
+  border: 1px solid #f5b7b1;
+}
+
+/* Optional: General h2 for form titles, if desired across all forms */
+/* If you want all h2 in your app to look like this, put it in a more general global CSS file.
+   If only form h2, keep it here or add a specific class to h2 in forms. */
+.form-title { /* Assign this class to your form <h2> like <h2 class="form-title"> */
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 35px;
+  font-size: 2.2em;
+  font-weight: 600;
+}
+
+/* Specific styling for date group (if used in other forms too) */
+.date-group {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.date-group .form-group {
+  flex: 1;
+  min-width: 250px;
+  margin-bottom: 0; /* Override default form-group margin */
+}

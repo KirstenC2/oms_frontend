@@ -10,8 +10,7 @@ const props = defineProps<{
   projects: Projects;
 }>();
 
-const router = useRouter(); // <--- NEW: Initialize router
-
+const router = useRouter(); 
 // Computed properties to format dates (no change)
 const formattedStartDate = computed(() => {
   if (!props.projects.startDate) return '';
@@ -34,15 +33,16 @@ const onViewDetailsClick = () => {
   <tr>
     <td>{{ props.projects.name }}</td>
     <td>{{ formattedStartDate }}</td>
-    <td> {{ formattedEndDate }}</td>
+    <td>{{ formattedEndDate }}</td>
     <td>
-      <span :class="['status-badge', props.projects.status.toLowerCase()]">
+      <span class="status-badge" :class="props.projects.status.toLowerCase()">
         {{ props.projects.status }}
       </span>
     </td>
-    
     <td>
-      <button class="view-details-btn" @click.stop="onViewDetailsClick">View Details</button>
+      <button class="view-details-btn" @click.stop="onViewDetailsClick">
+        View Details
+      </button>
     </td>
   </tr>
 </template>

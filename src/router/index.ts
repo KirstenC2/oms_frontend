@@ -5,6 +5,7 @@ import LeaveView from '@/views/LeaveView.vue'
 import LeaveDetailsPage from '@/modules/leaves/views/LeaveDetailsPage.vue' // Import the new LeaveDetailsPage component
 import ProjectDetailsPage from '@/modules/projects/views/ProjectDetailsPage.vue'// Import the new ProjectDetailsPage component
 import ProjectView from '@/modules/projects/views/ProjectView.vue'
+import CreateTaskPage from '@/modules/projects/views/CreateTaskPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -61,6 +62,11 @@ const router = createRouter({
       component: ProjectDetailsPage, // Ensure this component exists
       props: true, // This is crucial: it passes the `id` route parameter as a prop to LeaveDetailsPage
     },
+    {
+      path: '/create-tasks',
+      name: 'tasks',
+      component: CreateTaskPage,
+    }
   ],
 })
 

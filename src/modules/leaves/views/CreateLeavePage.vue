@@ -52,8 +52,8 @@ import { ref, onMounted } from 'vue'
 import { fetchUsers } from '@/modules/users/api/user-api'
 import { createLeaveRequest } from '@/modules/leaves/api/leave-api'
 import { LEAVE_TYPE_OPTIONS } from '@/modules/leaves/utils/leave-constants'
-
-const users = ref([])
+import type { User } from '@/modules/users/types/user-types'
+const users = ref<User[]>([])
 const leave = ref({
     employeeId: '',
     type: '',

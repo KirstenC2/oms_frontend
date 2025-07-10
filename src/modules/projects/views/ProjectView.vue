@@ -9,6 +9,7 @@ import { fetchAllProjects } from '../api/project-api';
 import type { Projects } from '../types/project-types';
 import ProjectList from '../components/ProjectList.vue';
 import CreateProjectPage from './CreateProjectPage.vue';
+import ProjectGantt from '../components/ProjectGantt.vue';
 
 // --- Reactive State ---
 const loading = ref(true);
@@ -17,7 +18,8 @@ const view = ref('list');
 const projectList = ref<any[]>([]); // Type the projectList explicitly
 const projectTabs = ref([
   { label: 'Project List', value: 'list', view: 'list' },
-  { label: 'Create New Project', value: 'create', view: 'create' }
+  { label: 'Create New Project', value: 'create', view: 'create' },
+  
 ]);
 // --- Component Methods ---
 
@@ -78,6 +80,7 @@ onMounted(() => {
           v-else
           :projectList="projectList"/>
       </div>
+      
     </div>
     <div v-else-if="view === 'create'">
       <!-- Placeholder for Create Project Page -->

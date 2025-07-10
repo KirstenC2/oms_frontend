@@ -11,3 +11,6 @@ export const deleteProjectByID = (id: string) =>
 
 export const createProject = (data: Record<string, any>) =>
     axios.post('http://localhost:5001/projects', data)
+
+export const getTasksByProjectId = (id: string) =>
+    axios.get(`http://localhost:5001/projects/${id}/tasks`)

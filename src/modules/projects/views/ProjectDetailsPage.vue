@@ -8,9 +8,7 @@
         <div v-else class="details-card">
             <p><strong>Project:</strong> {{ projectList.name }} </p>
             <p><strong>Status:</strong>
-                <span :class="['status-badge', projectList.status.toLowerCase()]">
-                    {{ projectList.status }}
-                </span>
+                <StatusBadge :status="projectList.status" />
             </p>
             <p><strong>Start Date:</strong> {{ formattedStartDate }}</p>
             <p><strong>End Date:</strong> {{ formattedEndDate }}</p>
@@ -22,8 +20,16 @@
             <button @click="goBack" class="back-button">Go Back to List</button>
             <button @click="handleRemoveProject">Remove project</button>
         </div>
-
-
+    </div>
+    <div>
+        <div v-if="loading" class="page-loading-message">載入專案數據中...</div>
+        <div v-else-if="error" class="page-error-message">錯誤: {{ error }}</div>
+        <div v-else-if="!projectList" class="page-not-found">找不到該專案。</div>
+        <div v-else>
+            <ProjectTaskItem :projects="[projectList]" :loading="loading" :error="error"
+                @task-created="handleTaskCreated" @update-task-status="handleUpdateTaskStatus" @update-issue-status="handleUpdateIssueStatus" />
+        </div>
+        
     </div>
 </template>
 
@@ -33,11 +39,19 @@ import { useRouter } from 'vue-router';
 import '@/assets/button.css'; // Import your button styles
 import type { Projects } from '@/modules/projects/types/project-types'; // Adjust the import path as needed
 import { deleteProjectByID, fetchProjectsByID } from '../api/project-api';
-import { errorMessages } from 'vue/compiler-sfc';
+import { updateTaskStatus } from '../api/task-api'; // Import the API function for updating task statu
+import { updateIssueStatus } from '../api/issue-api'; // Import the API function for updating issue status
+import ProjectTaskItem from '../components/ProjectTaskItem.vue';
+import ItemList from '../components/ItemList.vue'; // Import the ItemList component
+import type { IssueStatus } from '../types/issue-type'; // Import the IssueStatus type
 const props = defineProps({
     id: {
         type: String,
         required: true,
+    },
+    projects: {
+        type: Array as () => Projects[],
+        default: () => [],
     },
 });
 
@@ -46,6 +60,23 @@ const router = useRouter();
 const projectList = ref<Projects | null>(null);
 const loading = ref(true);
 const error = ref<string | null>(null);
+
+const handleTaskCreated = (task: any) => {
+    console.log('Task created:', task);
+    // Optionally, you can refresh the project details or perform other actions
+    fetchDetails(props.id); // Refresh project details after task creation
+};
+
+const handleUpdateTaskStatus = (taskId: string, status: string) => {
+    console.log(`Task with ID ${taskId} status updated to ${status}`);
+    updateTaskStatus(taskId, status);
+};
+
+const handleUpdateIssueStatus = (issueId: string, newStatus: IssueStatus) => {
+    console.log(`Issue with ID ${issueId} status updated to ${newStatus}`);
+    const res = updateIssueStatus(issueId, newStatus);
+    console.log('Issue status update response:', res);
+};
 
 // Function to fetch details based on the ID
 const fetchDetails = async (id: string) => {
@@ -101,7 +132,7 @@ const handleRemoveProject = async () => {
         await deleteProjectByID(projectList.value.id); // Assuming this function deletes the project
         console.log(`Project with ID ${projectList.value.id} has been removed.`);
         router.back(); // Redirect to the project list after deletion
-    
+
     } catch (error) {
         console.error('Failed to remove project:', error);
         // errorMessages = 'Failed to remove project. Please try again.';
