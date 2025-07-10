@@ -29,6 +29,7 @@
           <select id="sortBy" v-model="sortBy">
             <option value="startDate">Start Date</option>
             <option value="endDate">End Date</option>
+            <option value="updatedAt">Updated At</option>
             <option value="name">Task Name</option>
             <option value="status">Status</option>
           </select>
@@ -44,6 +45,7 @@
             <th @click="setSortBy('name')" :class="{ 'sorted-column': sortBy === 'name' }">Task Name</th>
             <th @click="setSortBy('startDate')" :class="{ 'sorted-column': sortBy === 'startDate' }">Start Date</th>
             <th @click="setSortBy('endDate')" :class="{ 'sorted-column': sortBy === 'endDate' }">End Date</th>
+            <th @click="setSortBy('updatedAt')" :class="{ 'sorted-column': sortBy === 'updatedAt' }">Updated At</th>
             <th @click="setSortBy('status')" :class="{ 'sorted-column': sortBy === 'status' }">Status</th>
           </tr>
         </thead>
@@ -52,8 +54,9 @@
             <td>{{ task.name }}</td>
             <td>{{ formatDateFull(task.startDate) }}</td>
             <td>{{ formatDateFull(task.endDate) }}</td>
+            <td>{{ formatDateFull(task.updatedAt) }}</td>
             <td>
-              <select :value="task.status" @change="handleStatusChange(task.id, $event.target.value as TaskStatus)"
+              <select :value="task.status" @change="handleStatusChange(task.id, ($event.target as HTMLSelectElement).value as TaskStatus)"
                 class="status-select">
                 <option v-for="statusOption in Object.values(TaskStatus)" :key="statusOption" :value="statusOption">
                   {{ formatTaskStatus(statusOption) }}
@@ -70,6 +73,10 @@
   <div v-else-if="view === 'create'" class="task-table-container">
     <CreateTaskPage :projectId="projects[0].id" @task-created="handleTaskCreated" />
   </div>
+  <div v-else-if="view === 'issueList'" class="task-table-container">
+    <IssueList :projects="projects" @task-created="handleTaskCreated" @update-task-status="handleStatusChange" />
+  </div>
+
 </template>
 
 <script setup lang="ts">
@@ -79,6 +86,7 @@ import type { Tab } from '@/types/leave'
 import { ProjectStatus, TaskStatus } from '@/modules/projects/types/project-types';
 import type { Projects, Task } from '@/modules/projects/types/project-types';
 import CreateTaskPage from '../views/CreateTaskPage.vue';
+import IssueList from './IssueList.vue';
 
 const props = defineProps<{
   projects: Projects[]; // Expecting an array of Projects (singular type)
@@ -100,6 +108,7 @@ const view = ref('list');
 const projectTabs: Tab[] = [
   { label: 'List', value: 'list', view: 'list' },
   { label: 'Create Task', value: 'create', view: 'create' },
+  { label: 'Issue List', value: 'issueList', view: 'issueList' }
 ];
 
 

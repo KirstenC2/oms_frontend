@@ -1,4 +1,4 @@
-
+import type { Issues } from '@/modules/projects/types/issue-type';
 
 export enum ProjectStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -26,6 +26,7 @@ export interface Projects {
   managerId: string | null; // Can be null
 //   manager?: User;     // Optional: only present if `include: { manager: true }`
   tasks?: Task[];     // Optional: only present if `include: { tasks: true }`
+  issues?: Issues[]; // Optional: only present if `include: { issues: true }`
   createdAt: string;  // ISO-8601 string
   updatedAt: string;  // ISO-8601 string
 }

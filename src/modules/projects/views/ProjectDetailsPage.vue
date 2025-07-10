@@ -8,9 +8,7 @@
         <div v-else class="details-card">
             <p><strong>Project:</strong> {{ projectList.name }} </p>
             <p><strong>Status:</strong>
-                <span :class="['status-badge', projectList.status.toLowerCase()]">
-                    {{ projectList.status }}
-                </span>
+                <StatusBadge :status="projectList.status" />
             </p>
             <p><strong>Start Date:</strong> {{ formattedStartDate }}</p>
             <p><strong>End Date:</strong> {{ formattedEndDate }}</p>
@@ -31,6 +29,7 @@
             <ProjectTaskItem :projects="[projectList]" :loading="loading" :error="error"
                 @task-created="handleTaskCreated" @update-task-status="handleUpdateTaskStatus" />
         </div>
+        
     </div>
 </template>
 
@@ -42,6 +41,7 @@ import type { Projects } from '@/modules/projects/types/project-types'; // Adjus
 import { deleteProjectByID, fetchProjectsByID } from '../api/project-api';
 import { updateTaskStatus } from '../api/task-api'; // Import the API function for updating task statu
 import ProjectTaskItem from '../components/ProjectTaskItem.vue';
+import ItemList from '../components/ItemList.vue'; // Import the ItemList component
 const props = defineProps({
     id: {
         type: String,
