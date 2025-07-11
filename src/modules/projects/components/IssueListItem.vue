@@ -5,7 +5,7 @@ import { IssueStatus, type Issues } from '@/modules/projects/types/issue-type';
 import type { Projects } from '@/modules/projects/types/project-types';
 import '@/assets/button.css';
 import '@/assets/table.css';
-
+import { useStatusHandler, useStatusFormatter } from '@/composable/status-utils'; // Assuming you have a composable for handling status changes
 const props = defineProps<{
   issue: Issues,
   projects: Projects[]; // Assuming you want to pass the projects as well
@@ -23,32 +23,28 @@ const issueList = computed(() => {
 });
 
 
-console.log('IssueListItem component initialized with issues:', issueList.value);
-
 const onViewDetailsClick = (issueId: string) => {
   console.log('Navigating to Issue Details Page:', issueId);
   router.push({ name: 'issue-details', params: { id: issueId } });
 };
 
-const handleStatusChange = (issueId: string, newStatus: IssueStatus) => {
-  console.log(`IssueTable: Emitting update-issue-status for Task ID: ${issueId}, New Status: ${newStatus}`);
-  emit('update-issue-status', issueId, newStatus);
-};
+const { handleStatusChange: handleIssueStatusChange } = useStatusHandler<string, IssueStatus, 'update-issue-status'>(emit, 'update-issue-status');
 
 // 顯示日期格式化
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString();
 };
 
-const formatStatus = (status: IssueStatus): string => {
-  const statusMap: Record<IssueStatus, string> = {
-    [IssueStatus.CLOSED]: '已關閉',
-    [IssueStatus.OPEN]: '未開始',
-    [IssueStatus.IN_PROGRESS]: '進行中',
-    [IssueStatus.RESOLVED]: '已解決',
-  };
-  return statusMap[status] || status;
+// Helper function to format status for display
+const issueStatusMap: Record<IssueStatus, string> = {
+  [IssueStatus.OPEN]: '已開單',
+  [IssueStatus.IN_PROGRESS]: '進行中',
+  [IssueStatus.RESOLVED]: '已解決',
+  [IssueStatus.CLOSED]: '關單',
 };
+
+const { formatStatus: formatIssueStatus } = useStatusFormatter<IssueStatus>(issueStatusMap);
+
 
 </script>
 
@@ -58,10 +54,10 @@ const formatStatus = (status: IssueStatus): string => {
     <!-- <td>{{ issueList.status }}</td> -->
     <td>
       <select :value="issueList.status"
-        @change="handleStatusChange(issueList.id, ($event.target as HTMLSelectElement).value as IssueStatus)"
+        @change="handleIssueStatusChange(issueList.id, ($event.target as HTMLSelectElement).value as IssueStatus)"
         class="status-select">
         <option v-for="statusOption in Object.values(IssueStatus)" :key="statusOption" :value="statusOption">
-          {{ formatStatus(statusOption) }}
+          {{ formatIssueStatus(statusOption) }}
         </option>
       </select>
 

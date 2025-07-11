@@ -1,32 +1,59 @@
 <template>
     <div class="project-details-page">
-        <ProjectContent :projectList="projectList" :loading="loading" :error="error"
-            @remove-project="handleRemoveProject" @go-back="goBack" />
+        <DetailsCard
+            title="Project Request Details"
+            :data="projectList"
+            :loading="loading"
+            :error="error"
+            :fieldsToDisplay="[
+            { key: 'name', label: 'Project' },
+            { key: 'status', label: 'Status', type: 'component', component: StatusBadge },
+            { key: 'startDate', label: 'Start Date', type: 'date' },
+            { key: 'endDate', label: 'End Date', type: 'date' },
+            { key: 'description', label: 'Description' },
+            { key: 'createdAt', label: 'Created Date' },
+            { key: 'updatedAt', label: 'Last Updated' },
+            { key: 'id', label: 'Request ID' }
+            ]">
+             <template #actions>
+                <button @click="handleRemoveProject">刪除專案</button>
+                <button @click="router.back()">返回專案列表</button>
+            </template>
+        </DetailsCard>
+       
     </div>
     <div>
         <div v-if="loading" class="page-loading-message">載入專案數據中...</div>
         <div v-else-if="error" class="page-error-message">錯誤: {{ error }}</div>
         <div v-else-if="!projectList" class="page-not-found">找不到該專案。</div>
         <div v-else>
-            <ProjectTaskItem :projects="[projectList]" :loading="loading" :error="error"
-                @task-created="handleTaskCreated" @update-task-status="handleUpdateTaskStatus" @update-issue-status="handleUpdateIssueStatus" @issue-created="handleIssueCreated" "/>
+            <ProjectTaskItem
+                :projects="[projectList]"
+                :loading="loading"
+                :error="error"
+                @task-created="handleTaskCreated"
+                @update-task-status="handleUpdateTaskStatus"
+                @update-issue-status="handleUpdateIssueStatus"
+                @issue-created="handleIssueCreated"
+            />
+
         </div>
         
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'; // Added computed
+import { ref, watch } from 'vue'; // Added computed
 import { useRouter } from 'vue-router';
 import '@/assets/button.css'; // Import your button styles
 import type { Projects } from '@/modules/projects/types/project-types'; // Adjust the import path as needed
 import { deleteProjectByID, fetchProjectsByID } from '../api/project-api';
 import { updateTaskStatus } from '../api/task-api'; // Import the API function for updating task statu
 import { updateIssueStatus } from '../api/issue-api'; // Import the API function for updating issue status
-import ProjectTaskItem from '../components/ProjectTaskItem.vue';
-import ItemList from '../components/ItemList.vue'; // Import the ItemList component
+import ProjectTaskItem from '@/modules/projects/views/ProjectTaskItem.vue';
 import type { IssueStatus } from '../types/issue-type'; // Import the IssueStatus type
-import ProjectContent from '../components/ProjectContent.vue';
+import StatusBadge from '@/modules/projects/components/StatusBadge.vue'; // Import the StatusBadge component
+import DetailsCard from '../components/DetailsCard.vue';
 const props = defineProps({
     id: {
         type: String,

@@ -96,12 +96,10 @@ const handleSubmit = async () => {
     const payload = {
       ...issue.value,
     }
-    // console.log("props:", props.projectId);
-    // payload.projectId = props.projectId;
-    console.log("payload:", payload);
+
 
     payload.projectId = props.projectId; // Ensure projectId is set from props
-    // CRITICAL: Ensure projectId is not empty
+
     if (!payload.projectId) {
       throw new Error('請輸入任務所屬的專案 ID。');
     }
