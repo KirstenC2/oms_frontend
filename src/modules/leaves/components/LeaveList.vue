@@ -1,5 +1,7 @@
 <script setup>
-import LeaveListItem from '@/modules/leaves/components/LeaveListItem.vue'; // Adjust path as needed
+import { ref, computed } from 'vue';
+import LeaveListItem from '@/modules/leaves/components/LeaveListItem.vue';
+import { usePagination } from '@/modules/leaves/composable/PaginationComposable'; // Adjust path as needed
 
 const props = defineProps({
   leaveList: {
@@ -13,6 +15,19 @@ const emit = defineEmits(['cancel-leave']);
 const handleCancel = (leaveId) => {
   emit('cancel-leave', leaveId);
 };
+
+const {
+  currentPage,
+  itemsPerPage,
+  totalPages,
+  paginatedItems,
+  goToPage,
+  nextPage,
+  prevPage,
+} = usePagination(props.leaveList, 10);
+
+const paginatedLeaves = computed(() => paginatedItems.value);
+
 </script>
 
 <template>
@@ -24,24 +39,36 @@ const handleCancel = (leaveId) => {
         <tr>
           <th>Application Date</th>
           <th>Employee</th>
-          <!-- <th>Email</th> -->
           <th>Type</th>
-          <!-- <th>Start</th> -->
-          <!-- <th>End</th> -->
-          <!-- <th>Reason</th> -->
           <th>Status</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
         <LeaveListItem
-          v-for="leave in leaveList"
+          v-for="leave in paginatedLeaves"
           :key="leave.id"
           :leave="leave"
           @cancel-request="handleCancel"
         />
       </tbody>
     </table>
+
+    <!-- Pagination Controls -->
+    <div v-if="totalPages > 1" class="pagination-controls">
+      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+
+      <button
+        v-for="page in totalPages"
+        :key="page"
+        :class="{ active: page === currentPage }"
+        @click="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+
+      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+    </div>
   </div>
 </template>
 
@@ -66,5 +93,30 @@ const handleCancel = (leaveId) => {
 
 .leave-table th {
   background-color: #f2f2f2;
+}
+
+/* Pagination styles */
+.pagination-controls {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.pagination-controls button {
+  margin: 0 3px;
+  padding: 5px 12px;
+  border: none;
+  background-color: #eee;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-controls button.active {
+  background-color: #3498db;
+  color: white;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 </style>
