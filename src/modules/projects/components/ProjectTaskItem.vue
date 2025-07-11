@@ -76,7 +76,9 @@
   <div v-else-if="view === 'issueList'" class="task-table-container">
     <IssueList :projects="projects" @update-task-status="handleStatusChange" @update-issue-status="handleIssueStatusChange"/>
   </div>
-
+  <div v-else-if="view === 'createIssue'" class="task-table-container">
+    <CreateIssuePage :projectId="projects[0].id" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -89,7 +91,7 @@ import CreateTaskPage from '../views/CreateTaskPage.vue';
 import IssueList from './IssueList.vue';
 import { updateIssueStatus } from '../api/issue-api';
 import type { IssueStatus } from '../types/issue-type';
-
+import CreateIssuePage from '../views/CreateIssuePage.vue';
 const props = defineProps<{
   projects: Projects[]; // Expecting an array of Projects (singular type)
   loading: boolean;     // Pass loading state from parent
@@ -111,7 +113,9 @@ const view = ref('list');
 const projectTabs: Tab[] = [
   { label: 'List', value: 'list', view: 'list' },
   { label: 'Create Task', value: 'create', view: 'create' },
-  { label: 'Issue List', value: 'issueList', view: 'issueList' }
+  { label: 'Issue List', value: 'issueList', view: 'issueList' },
+  { label: 'Create Issue', value: 'createIssue', view: 'createIssue' },
+
 ];
 
 
