@@ -12,12 +12,6 @@
         <textarea id="description" v-model="task.description" placeholder="輸入任務描述..."></textarea>
       </div>
 
-      <!-- <div class="form-group">
-        <label for="projectId">所屬專案 ID:</label>
-        <input type="text" id="projectId" v-model="task.projectId" required placeholder="輸入任務所屬專案的 ID" />
-        <small>(此任務將屬於此專案)</small>
-      </div> -->
-
       <div class="form-group">
         <label for="startDate">開始日期時間:</label>
         <!-- Use datetime-local for full timestamp input -->

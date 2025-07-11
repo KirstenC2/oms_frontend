@@ -1,56 +1,3 @@
-<script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
-import type { Projects } from '@/modules/projects/types/project-types'; // Make sure to adjust the path to your types
-import {  ProjectStatus } from '@/modules/projects/types/project-types'; // Import necessary types
-import type { User } from '@/modules/users/types/user-types'; // Import User type
-import ProjectListItem from './ProjectListItem.vue'; // Import the ProjectListItem component
-// Define the props for this component
-const props = defineProps({
-  projectList: {
-    type: Array as () => Projects[], // Type assertion for Array of Project
-    required: true,
-  },
-});
-
-// Define emits for actions, e.g., for handling a delete or cancel action
-const emit = defineEmits(['delete-project']); // Renamed from cancel-project to delete-project
-
-// Function to handle the delete action
-const handleDelete = (projectId: string) => {
-  emit('delete-project', projectId);
-};
-
-// Helper function to format dates
-const formatDate = (dateString: string): string => {
-  if (!dateString) return 'N/A';
-  const date = new Date(dateString);
-  // Example: "2025年8月1日"
-  return date.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
-};
-
-// Helper function to format status for display
-const formatStatus = (status: ProjectStatus): string => {
-  const statusMap: Record<ProjectStatus, string> = {
-    [ProjectStatus.NOT_STARTED]: '未開始',
-    [ProjectStatus.IN_PROGRESS]: '進行中',
-    [ProjectStatus.COMPLETED]: '已完成',
-    [ProjectStatus.ON_HOLD]: '暫停',
-    [ProjectStatus.CANCELLED]: '已取消',
-  };
-  return statusMap[status] || status;
-};
-
-// Helper function to get manager name
-const getManagerName = (manager: User | null): string => {
-  return manager ? manager.name : 'N/A';
-};
-
-// Helper function to get manager email
-const getManagerEmail = (manager: User | null): string => {
-  return manager ? manager.email : 'N/A';
-};
-</script>
-
 <template>
   <div class="project-section">
     <h3>All Projects</h3>
@@ -61,11 +8,9 @@ const getManagerEmail = (manager: User | null): string => {
       <thead>
         <tr>
           <th>Project Name</th>
-          <!-- <th>描述</th> -->
           <th>Start Date</th>
           <th>End Date</th>
           <th>Status</th>
-          <!-- <th>管理者</th> -->
           <th>Action</th>
         </tr>
       </thead>
@@ -75,26 +20,25 @@ const getManagerEmail = (manager: User | null): string => {
           :key="project.id"
           :projects="project"
         />
-        <!-- <tr v-for="project in projectList" :key="project.id">
-          <td>{{ project.name }}</td>
-          <td>{{ project.description || '無描述' }}</td>
-          <td>{{ formatDate(project.startDate) }}</td>
-          <td>{{ formatDate(project.endDate) }}</td>
-          <td>
-            <span :class="['status-badge', project.status.toLowerCase()]">
-              {{ formatStatus(project.status) }}
-            </span>
-          </td>
-          <td>{{ getManagerName(project.managerId) }}</td>
-          <td>{{ formatDate(project.createdAt) }}</td>
-          <td>
-            <button @click="onViewDetailsClick(project.id)" class="action-button view-button">View Details</button>
-            </td>
-        </tr> -->
       </tbody>
     </table>
   </div>
 </template>
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue';
+import type { Projects } from '@/modules/projects/types/project-types'; // Make sure to adjust the path to your types
+import ProjectListItem from './ProjectListItem.vue'; // Import the ProjectListItem component
+
+defineProps({
+  projectList: {
+    type: Array as () => Projects[], // Type assertion for Array of Project
+    required: true,
+  },
+});
+
+const emit = defineEmits(['delete-project']); // Renamed from cancel-project to delete-project
+
+</script>
 
 <style scoped>
 .project-section {

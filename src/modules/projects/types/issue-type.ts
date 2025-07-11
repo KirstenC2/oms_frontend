@@ -26,3 +26,11 @@ export interface Issues {
     // Other project details if needed
   };
 }
+
+export interface IssuesFormState {
+  title: string;
+  description?: string; // Optional since it can be null
+  status: IssueStatus;
+  priority: IssuePriority;
+  projectId: string; // Foreign key to the project
+}

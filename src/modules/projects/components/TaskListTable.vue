@@ -1,7 +1,5 @@
 <template>
-  <SubNavBar :tabs="projectTabs" :view="view" @change="setView" />
-
-  <div v-if="view === 'list'" class="task-table-container">
+  <div class="task-table-container">
     <h2>Project Tasks</h2>
 
     <div v-if="loading" class="loading-message">
@@ -56,7 +54,8 @@
             <td>{{ formatDateFull(task.endDate) }}</td>
             <td>{{ formatDateFull(task.updatedAt) }}</td>
             <td>
-              <select :value="task.status" @change="handleStatusChange(task.id, ($event.target as HTMLSelectElement).value as TaskStatus)"
+              <select :value="task.status"
+                @change="handleTaskStatusChange(task.id, ($event.target as HTMLSelectElement).value as TaskStatus)"
                 class="status-select">
                 <option v-for="statusOption in Object.values(TaskStatus)" :key="statusOption" :value="statusOption">
                   {{ formatTaskStatus(statusOption) }}
@@ -66,154 +65,83 @@
           </tr>
         </tbody>
       </table>
-
     </div>
-
   </div>
-  <div v-else-if="view === 'create'" class="task-table-container">
-    <CreateTaskPage :projectId="projects[0].id" @task-created="handleTaskCreated" />
-  </div>
-  <div v-else-if="view === 'issueList'" class="task-table-container">
-    <IssueList :projects="projects" @update-task-status="handleStatusChange" @update-issue-status="handleIssueStatusChange"/>
-  </div>
-
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
-import type { Tab } from '@/types/leave'
-import { ProjectStatus, TaskStatus } from '@/modules/projects/types/project-types';
-import type { Projects, Task } from '@/modules/projects/types/project-types';
-import CreateTaskPage from '../views/CreateTaskPage.vue';
-import IssueList from './IssueList.vue';
-import { updateIssueStatus } from '../api/issue-api';
-import type { IssueStatus } from '../types/issue-type';
+import type { Task } from '@/modules/projects/types/project-types';
+import { TaskStatus, ProjectStatus } from '@/modules/projects/types/project-types';
+import type { Projects } from '@/modules/projects/types/project-types';
+import { useStatusHandler } from '@/composable/status-utils'; // Assuming you have a composable for handling status changes
+import { formatDateFull } from '@/composable/date-utils'; // Assuming you have a date formatting utility
 
 const props = defineProps<{
-  projects: Projects[]; // Expecting an array of Projects (singular type)
-  loading: boolean;     // Pass loading state from parent
-  error: string | null;  // Pass error state from parent
+  projects: Projects[];
+  loading: boolean;
+  error: string | null;
 }>();
 
 const emit = defineEmits<{
-  (event: 'task-created', task: Task): void; // Emit event when a task is created
-  (event: 'update-task-status', taskId: string, status: TaskStatus): void; // Emit event when task status changes
-  (event: 'update-issue-status', issueId: string, newStatus: IssueStatus): void; // Emit event when issue status changes
+  (event: 'update-task-status', taskId: string, status: TaskStatus): void;
 }>();
 
-
-const filterStatus = ref<TaskStatus | ''>(''); // Allows enum values or an empty string
+const filterStatus = ref<TaskStatus | ''>('');
 const sortBy = ref<string>('startDate');
 const sortOrder = ref<'asc' | 'desc'>('asc');
-const view = ref('list');
 
-const projectTabs: Tab[] = [
-  { label: 'List', value: 'list', view: 'list' },
-  { label: 'Create Task', value: 'create', view: 'create' },
-  { label: 'Issue List', value: 'issueList', view: 'issueList' }
-];
-
-
-const setView = (v: string) => {
-  view.value = v;
-};
-
-// --- Derived State (Computed Properties) ---
-const handleTaskCreated = (task: Task) => {
-  console.log('Task created:', task);
-  emit('task-created', task); // Emit event to parent component
-};
-const handleStatusChange = (taskId: string, newStatus: TaskStatus) => {
-  console.log(`TaskTable: Emitting update-task-status for Task ID: ${taskId}, New Status: ${newStatus}`);
-  emit('update-task-status', taskId, newStatus);
-};
-
-const handleIssueStatusChange = (issueId: string, newStatus: IssueStatus) => {
-  console.log(`ProjectTaskItem: Emitting update-issue-status for Task ID: ${issueId}, New Status: ${newStatus}`);
-  emit('update-issue-status', issueId, newStatus);
-};
-const formatTaskStatus = (status: TaskStatus): string => {
-  switch (status) {
-    case TaskStatus.NOT_STARTED: return '未開始';
-    case TaskStatus.IN_PROGRESS: return '進行中';
-    case TaskStatus.COMPLETED: return '已完成';
-    case TaskStatus.ON_HOLD: return '暫停';
-    case TaskStatus.CANCELLED: return '已取消';
-    default: return status;
-  }
-};
-
-// Flatten all tasks from all projects into a single array
 const allTasks = computed<Task[]>(() => {
-  if (!props.projects) return [];
   return props.projects.flatMap(project => project.tasks || []);
 });
 
-// Get unique task statuses for the filter dropdown
 const uniqueTaskStatuses = computed<TaskStatus[]>(() => {
-  const statuses = new Set<TaskStatus>(); // Set also stores TaskStatus
+  const statuses = new Set<TaskStatus>();
   allTasks.value.forEach(task => statuses.add(task.status));
-  // Convert Set to Array and sort, ensuring the type remains TaskStatus[]
-  // Add a type assertion if `sort()` might return a less specific type in some TS versions
   return Array.from(statuses).sort((a, b) => a.localeCompare(b)) as TaskStatus[];
 });
 
-// Filtered tasks based on selected status
 const filteredTasks = computed<Task[]>(() => {
-  if (!filterStatus.value) {
-    return allTasks.value;
-  }
+  if (!filterStatus.value) return allTasks.value;
   return allTasks.value.filter(task => task.status === filterStatus.value);
 });
 
-// Filtered and then sorted tasks
 const filteredAndSortedTasks = computed<Task[]>(() => {
-  const tasks = [...filteredTasks.value]; // Create a shallow copy to sort
-
+  const tasks = [...filteredTasks.value];
   tasks.sort((a, b) => {
-    let valA: any, valB: any;
+    let valA: any = a[sortBy.value as keyof Task];
+    let valB: any = b[sortBy.value as keyof Task];
 
-    if (sortBy.value === 'startDate' || sortBy.value === 'endDate') {
-      // For dates, compare their timestamps
-      valA = new Date(a[sortBy.value]).getTime();
-      valB = new Date(b[sortBy.value]).getTime();
-    } else {
-      // For strings (name, status), use localeCompare
-      valA = a[sortBy.value as keyof Task];
-      valB = b[sortBy.value as keyof Task];
-
-      if (typeof valA === 'string' && typeof valB === 'string') {
-        return sortOrder.value === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-      }
+    if (sortBy.value.includes('Date')) {
+      valA = new Date(valA).getTime();
+      valB = new Date(valB).getTime();
+    } else if (typeof valA === 'string' && typeof valB === 'string') {
+      return sortOrder.value === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
     }
 
     if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1;
     if (valA > valB) return sortOrder.value === 'asc' ? 1 : -1;
     return 0;
   });
-
   return tasks;
 });
 
-// --- Methods ---
 
-const formatDateFull = (date: Date | string): string => {
-  if (!date) return 'N/A';
-  const d = typeof date === 'string' ? new Date(date) : date; // Still handles string if it somehow arrives
-  return d.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' });
-};
+const { handleStatusChange: handleTaskStatusChange } = useStatusHandler<string, TaskStatus, 'update-task-status'>(emit, 'update-task-status')
+
 
 const formatStatus = (status: ProjectStatus | TaskStatus): string => {
-  const statusMap: Record<ProjectStatus | TaskStatus, string> = {
+  const map: Record<ProjectStatus | TaskStatus, string> = {
     [ProjectStatus.NOT_STARTED]: '未開始',
     [ProjectStatus.IN_PROGRESS]: '進行中',
     [ProjectStatus.COMPLETED]: '已完成',
     [ProjectStatus.ON_HOLD]: '暫停',
     [ProjectStatus.CANCELLED]: '已取消',
   };
-  return statusMap[status] || status;
+  return map[status] || status;
 };
+
+const formatTaskStatus = formatStatus;
 
 const toggleSortOrder = () => {
   sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
@@ -221,15 +149,16 @@ const toggleSortOrder = () => {
 
 const setSortBy = (column: string) => {
   if (sortBy.value === column) {
-    toggleSortOrder(); // If clicking same column, toggle order
+    toggleSortOrder();
   } else {
-    sortBy.value = column; // If new column, set it and reset to asc
+    sortBy.value = column;
     sortOrder.value = 'asc';
   }
 };
 </script>
 
 <style scoped>
+
 .task-table-container {
   max-width: 1000px;
   /* Adjusted for a wider table view */
@@ -378,7 +307,7 @@ select {
 /* Blue */
 .status-completed {
   background-color: #4dbd74;
-}
+}ß
 
 /* Green */
 .status-on-hold {

@@ -1,49 +1,59 @@
 <template>
     <div class="project-details-page">
-        <h2>Project Request Details</h2>
-
-        <div v-if="loading">Loading details...</div>
-        <div v-else-if="error" style="color:red;">{{ error }}</div>
-        <div v-else-if="!projectList">No project request found for this ID.</div>
-        <div v-else class="details-card">
-            <p><strong>Project:</strong> {{ projectList.name }} </p>
-            <p><strong>Status:</strong>
-                <StatusBadge :status="projectList.status" />
-            </p>
-            <p><strong>Start Date:</strong> {{ formattedStartDate }}</p>
-            <p><strong>End Date:</strong> {{ formattedEndDate }}</p>
-            <p><strong>Description:</strong> {{ projectList.description }}</p>
-            <p><strong>Created Date:</strong> {{ projectList.createdAt }}</p>
-            <p><strong>Last Updated:</strong> {{ projectList.updatedAt }}</p>
-            <p><strong>Request ID:</strong> {{ projectList.id }}</p>
-
-            <button @click="goBack" class="back-button">Go Back to List</button>
-            <button @click="handleRemoveProject">Remove project</button>
-        </div>
+        <DetailsCard
+            title="Project Request Details"
+            :data="projectList"
+            :loading="loading"
+            :error="error"
+            :fieldsToDisplay="[
+            { key: 'name', label: 'Project' },
+            { key: 'status', label: 'Status', type: 'component', component: StatusBadge },
+            { key: 'startDate', label: 'Start Date', type: 'date' },
+            { key: 'endDate', label: 'End Date', type: 'date' },
+            { key: 'description', label: 'Description' },
+            { key: 'createdAt', label: 'Created Date' },
+            { key: 'updatedAt', label: 'Last Updated' },
+            { key: 'id', label: 'Request ID' }
+            ]">
+             <template #actions>
+                <button @click="handleRemoveProject">刪除專案</button>
+                <button @click="router.back()">返回專案列表</button>
+            </template>
+        </DetailsCard>
+       
     </div>
     <div>
         <div v-if="loading" class="page-loading-message">載入專案數據中...</div>
         <div v-else-if="error" class="page-error-message">錯誤: {{ error }}</div>
         <div v-else-if="!projectList" class="page-not-found">找不到該專案。</div>
         <div v-else>
-            <ProjectTaskItem :projects="[projectList]" :loading="loading" :error="error"
-                @task-created="handleTaskCreated" @update-task-status="handleUpdateTaskStatus" @update-issue-status="handleUpdateIssueStatus" />
+            <ProjectTaskItem
+                :projects="[projectList]"
+                :loading="loading"
+                :error="error"
+                @task-created="handleTaskCreated"
+                @update-task-status="handleUpdateTaskStatus"
+                @update-issue-status="handleUpdateIssueStatus"
+                @issue-created="handleIssueCreated"
+            />
+
         </div>
         
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'; // Added computed
+import { ref, watch } from 'vue'; // Added computed
 import { useRouter } from 'vue-router';
 import '@/assets/button.css'; // Import your button styles
 import type { Projects } from '@/modules/projects/types/project-types'; // Adjust the import path as needed
 import { deleteProjectByID, fetchProjectsByID } from '../api/project-api';
 import { updateTaskStatus } from '../api/task-api'; // Import the API function for updating task statu
 import { updateIssueStatus } from '../api/issue-api'; // Import the API function for updating issue status
-import ProjectTaskItem from '../components/ProjectTaskItem.vue';
-import ItemList from '../components/ItemList.vue'; // Import the ItemList component
+import ProjectTaskItem from '@/modules/projects/views/ProjectTaskItem.vue';
 import type { IssueStatus } from '../types/issue-type'; // Import the IssueStatus type
+import StatusBadge from '@/modules/projects/components/StatusBadge.vue'; // Import the StatusBadge component
+import DetailsCard from '@/components/shared/DetailsCard.vue';
 const props = defineProps({
     id: {
         type: String,
@@ -57,7 +67,7 @@ const props = defineProps({
 
 const router = useRouter();
 
-const projectList = ref<Projects | null>(null);
+const projectList = ref<Projects | null>(null)
 const loading = ref(true);
 const error = ref<string | null>(null);
 
@@ -65,6 +75,11 @@ const handleTaskCreated = (task: any) => {
     console.log('Task created:', task);
     // Optionally, you can refresh the project details or perform other actions
     fetchDetails(props.id); // Refresh project details after task creation
+};
+const handleIssueCreated = (issue: any) => {
+    console.log('Issue created:', issue);
+    // Optionally, you can refresh the project details or perform other actions
+    fetchDetails(props.id); // Refresh project details after issue creation
 };
 
 const handleUpdateTaskStatus = (taskId: string, status: string) => {
@@ -95,31 +110,7 @@ const fetchDetails = async (id: string) => {
     }
 };
 
-// Computed property to format start date
-const formattedStartDate = computed(() => {
-    if (!projectList.value?.startDate) return '';
-    try {
-        return new Date(projectList.value.startDate).toLocaleDateString('en-US', {
-            year: 'numeric', month: 'long', day: 'numeric'
-        });
-    } catch (e) {
-        console.error('Error formatting start date:', e);
-        return projectList.value.startDate; // Fallback to raw date
-    }
-});
 
-// Computed property to format end date
-const formattedEndDate = computed(() => {
-    if (!projectList.value?.endDate) return '';
-    try {
-        return new Date(projectList.value.endDate).toLocaleDateString('en-US', {
-            year: 'numeric', month: 'long', day: 'numeric'
-        });
-    } catch (e) {
-        console.error('Error formatting end date:', e);
-        return projectList.value.endDate; // Fallback to raw date
-    }
-});
 
 const handleRemoveProject = async () => {
     console.log(`Attempting to remove project with ID: ${projectList.value?.id}`);
@@ -140,9 +131,9 @@ const handleRemoveProject = async () => {
 };
 
 
-const goBack = () => {
-    router.back();
-};
+// const goBack = () => {
+//     router.back();
+// // };
 
 // Fetch data when the component is first loaded or ID changes
 watch(() => props.id, (newId) => {
