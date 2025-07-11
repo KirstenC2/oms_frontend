@@ -1,23 +1,18 @@
 <template>
-  <div class="leave-details-page">
-    <h2>Leave Request Details</h2>
-
-    <div v-if="loading">Loading details...</div>
-    <div v-else-if="error" style="color:red;">{{ error }}</div>
-    <div v-else-if="!leaveRequest">No leave request found for this ID.</div>
-    <div v-else class="details-card">
-      <p><strong>Employee:</strong> {{ leaveRequest.employee.name }} ({{ leaveRequest.employee.email }})</p>
-      <p><strong>Type:</strong> {{ leaveRequest.type }}</p>
-      <p><strong>Status:</strong>
-        <span :class="['status-badge', leaveRequest.status.toLowerCase()]">
-          {{ leaveRequest.status }}
-        </span>
-      </p>
-      <p><strong>Start Date:</strong> {{ formattedStartDate }}</p>
-      <p><strong>End Date:</strong> {{ formattedEndDate }}</p>
-      <p><strong>Reason:</strong> {{ leaveRequest.reason }}</p>
-      <p><strong>Request ID:</strong> {{ leaveRequest.id }}</p>
-
+  <DetailsCard
+    title="Leave Request Details"
+    :data="leaveRequest"
+    :fieldsToDisplay="[
+      { key: 'employeeName', label: 'Employee' },
+      { key: 'type', label: 'Type' },
+      { key: 'status', label: 'Status', type: 'component', component: StatusBadge },
+      { key: 'startDate', label: 'Start Date', type: 'date' },
+      { key: 'endDate', label: 'End Date', type: 'date' },
+      { key: 'reason', label: 'Reason' },
+      { key: 'id', label: 'Request ID' }
+    ]"
+  >
+    <template #actions>
       <div class="actions">
         <button
           v-if="canApprove"
@@ -49,17 +44,20 @@
         <button @click="goBack" class="back-button">Go Back to List</button>
       </div>
 
-
-    </div>
-  </div>
+    </template>
+  </DetailsCard>
 </template>
+
+
+
 
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'; // Added computed
 import { useRouter } from 'vue-router';
 import '@/assets/button.css'; // Import your button styles
 import { fetchLeaveRequestsByID, cancelLeaveRequest as apiCancelLeaveRequest, approveLeaveRequest, rejectLeaveRequest } from '@/modules/leaves/api/leave-api'; 
-
+import DetailsCard from '@/components/shared/DetailsCard.vue'; // Adjust the path as necessary
+import StatusBadge from '@/modules/projects/components/StatusBadge.vue'; // Adjust the path as
 import type { LeaveRequest } from '@/types/leave'; // Ensure this path is correct
 
 const props = defineProps({
@@ -94,37 +92,13 @@ const fetchDetails = async (id: string) => {
   }
 };
 
-// Computed property to format start date
-const formattedStartDate = computed(() => {
-  if (!leaveRequest.value?.startDate) return '';
-  try {
-    return new Date(leaveRequest.value.startDate).toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric'
-    });
-  } catch (e) {
-    console.error('Error formatting start date:', e);
-    return leaveRequest.value.startDate; // Fallback to raw date
-  }
-});
 
-// Computed property to format end date
-const formattedEndDate = computed(() => {
-  if (!leaveRequest.value?.endDate) return '';
-  try {
-    return new Date(leaveRequest.value.endDate).toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric'
-    });
-  } catch (e) {
-    console.error('Error formatting end date:', e);
-    return leaveRequest.value.endDate; // Fallback to raw date
-  }
-});
 
 // Refactored computed properties for action visibility
 const isPending = computed(() => leaveRequest.value?.status === 'PENDING');
 const isApproved = computed(() => leaveRequest.value?.status === 'APPROVED');
 
-const canCancel = computed(() => isPending.value || isApproved.value); // Cancel if Pending or Approved
+const canCancel = computed(() => isPending.value); // Cancel if Pending or Approved
 const canReject = isPending; // Reject only if Pending
 const canApprove = isPending; // Approve only if Pending
 

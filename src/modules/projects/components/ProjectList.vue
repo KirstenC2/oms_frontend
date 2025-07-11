@@ -8,11 +8,9 @@
       <thead>
         <tr>
           <th>Project Name</th>
-          <!-- <th>描述</th> -->
           <th>Start Date</th>
           <th>End Date</th>
           <th>Status</th>
-          <!-- <th>管理者</th> -->
           <th>Action</th>
         </tr>
       </thead>

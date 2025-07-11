@@ -53,7 +53,7 @@ import { updateIssueStatus } from '../api/issue-api'; // Import the API function
 import ProjectTaskItem from '@/modules/projects/views/ProjectTaskItem.vue';
 import type { IssueStatus } from '../types/issue-type'; // Import the IssueStatus type
 import StatusBadge from '@/modules/projects/components/StatusBadge.vue'; // Import the StatusBadge component
-import DetailsCard from '../components/DetailsCard.vue';
+import DetailsCard from '@/components/shared/DetailsCard.vue';
 const props = defineProps({
     id: {
         type: String,
