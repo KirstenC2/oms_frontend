@@ -24,7 +24,7 @@ import { deleteUser, deactiveUser, activateUser as activateAPI  } from '@/module
 
 const props = defineProps<{
   item: Record<string, any>,
-  type: 'user' | 'department' | 'role',
+  type: 'user' | 'department' | 'role' | 'client',
 }>()
 
 const emit = defineEmits<{
@@ -36,6 +36,7 @@ const title = computed(() => {
   if (props.type === 'user') return props.item.name || props.item.email || 'User'
   if (props.type === 'department') return props.item.name || 'Department'
   if (props.type === 'role') return props.item.name || 'Role'
+  if (props.type === 'client') return props.item.name || 'Client'
   return ''
 })
 
@@ -73,6 +74,15 @@ const displayFields = computed(() => {
     return {
       Name: props.item.name,
       Description: props.item.description,
+    }
+  }
+  if (props.type === 'client') {
+    return {
+      Name: props.item.name,
+      Email: props.item.email,
+      Phone: props.item.phone,
+      Address: props.item.address || 'N/A',
+      'Total Projects': props.item.projects?.length || 0
     }
   }
   return {}

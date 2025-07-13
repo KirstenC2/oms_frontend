@@ -6,6 +6,7 @@ import LeaveDetailsPage from '@/modules/leaves/views/LeaveDetailsPage.vue' // Im
 import ProjectView from '@/modules/projects/views/ProjectView.vue'
 import CreateTaskPage from '@/modules/projects/views/CreateTaskPage.vue'
 import ProjectBoardPage from '@/modules/projects/views/ProjectBoardPage.vue'
+import ClientView from '@/modules/clients/views/ClientView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -66,6 +67,11 @@ const router = createRouter({
       path: '/create-tasks',
       name: 'tasks',
       component: CreateTaskPage,
+    },
+    {
+      path: '/clients',
+      name: 'clients',
+      component: ClientView,
     }
   ],
 })

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import LeaveListItem from '@/modules/leaves/components/LeaveListItem.vue';
-import { usePagination } from '@/modules/leaves/composable/PaginationComposable'; // Adjust path as needed
+import { usePagination } from '@/composable/pagination'; // Adjust path as needed
 
 const props = defineProps({
   leaveList: {
