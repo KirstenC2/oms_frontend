@@ -13,7 +13,7 @@
             { key: 'description', label: 'Description' },
             { key: 'createdAt', label: 'Created Date' },
             { key: 'updatedAt', label: 'Last Updated' },
-            { key: 'id', label: 'Request ID' }
+            { key: 'id', label: 'Request ID' },
             ]">
              <template #actions>
                 <button @click="handleRemoveProject">刪除專案</button>
@@ -102,6 +102,7 @@ const fetchDetails = async (id: string) => {
     try {
         const response = await fetchProjectsByID(id);
         projectList.value = response.data;
+        console.log(projectList.value);
     } catch (err) {
         console.error('Failed to fetch project details:', err);
         error.value = 'Failed to load project details. Please try again.';

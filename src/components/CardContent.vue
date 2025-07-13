@@ -21,7 +21,7 @@ import { computed } from 'vue'
 import { deleteDepartment } from '@/modules/departments/department-api';
 import { deleteRole } from '@/modules/users/api/role-api';
 import { deleteUser, deactiveUser, activateUser as activateAPI  } from '@/modules/users/api/user-api';
-
+import { removeClients } from '@/modules/clients/api/client-api';
 const props = defineProps<{
   item: Record<string, any>,
   type: 'user' | 'department' | 'role' | 'client',
@@ -108,7 +108,13 @@ const deleteItem = async () => {
   
       console.log(`Role ${props.item.id} deleted successfully.`)
       emit('refreshRequest')
-    } else {
+    } 
+    else if (props.type === 'client') {
+      await removeClients(props.item.id)
+  
+      console.log(`Client ${props.item.id} deleted successfully.`)
+      emit('refreshRequest')
+    }else {
       console.warn('Unknown type for deletion:', props.type)
     }
 

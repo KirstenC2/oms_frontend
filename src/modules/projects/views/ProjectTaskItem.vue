@@ -16,6 +16,19 @@
   <div v-else-if="view === 'createIssue'" class="task-table-container">
     <CreateIssuePage :projectId="projects[0].id" />
   </div>
+  <div v-else-if="view === 'clientInfo'" class="task-table-container">
+    <ContactCard
+      title="Client Contact"
+      :client="clientInfo" 
+      :loading="loading"
+      :error="error"
+      :fieldsToDisplay="[
+        { key: 'name', label: 'Client Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'phone', label: 'Phone' }
+      ]">
+      </ContactCard>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -29,6 +42,9 @@ import IssueList from '@/modules/projects/components/IssueList.vue';
 import TaskListTable from '@/modules/projects/components/TaskListTable.vue';
 import type { IssueStatus } from '@/modules/projects/types/issue-type';
 import CreateIssuePage from '../views/CreateIssuePage.vue';
+import ContactCard from '@/components/shared/ContactCard.vue';
+
+
 const props = defineProps<{
   projects: Projects[]; // Expecting an array of Projects (singular type)
   loading: boolean;     // Pass loading state from parent
@@ -42,10 +58,12 @@ const emit = defineEmits<{
 }>();
 
 
-
 const view = ref('list');
-
+const clientInfo = computed(() => {
+  return props.projects.length > 0 ? props.projects[0].client : null;
+});
 const projectTabs: Tab[] = [
+  { label: 'Client Info', value: 'clientInfo', view: 'clientInfo'},
   { label: 'List', value: 'list', view: 'list' },
   { label: 'Create Task', value: 'create', view: 'create' },
   { label: 'Issue List', value: 'issueList', view: 'issueList' },

@@ -1,17 +1,13 @@
 <template>
-  <div class="details-card">
+  <div class="contact-card">
     <h2>{{ title }}</h2>
-  <!-- <p>{{ data }}</p> -->
     <div v-if="loading">Loading details...</div>
     <div v-else-if="error" style="color:red;">{{ error }}</div>
-    <div v-else-if="!data">No {{ title.toLowerCase() }} found.</div>
-    <div v-else>
+    <div v-else-if="!client">No {{ title.toLowerCase() }} found.</div>  
+    <div v-else class="contact-info">
       <p v-for="field in fieldsToDisplay" :key="field.key">
         <strong>{{ field.label }}:</strong>
-        <span v-if="field.type === 'date'">{{ formatDate(data[field.key]) }}</span>
-        <component v-else-if="field.type === 'component'" :is="field.component" :status="data[field.key]" />
-        <span v-else>{{ data[field.key] }}</span>
-        
+        {{ client[field.key] }}
       </p>
 
       <slot name="actions" />
@@ -24,8 +20,7 @@ import { computed } from 'vue';
 
 const props = defineProps<{
   title: string;
-  data: Record<string, any> | null | undefined;
-  client?: string | null; // Optional for client details
+  client: string | any; // Optional for client details
   loading?: boolean;
   error?: string | null;
   fieldsToDisplay: {
@@ -51,12 +46,21 @@ const formatDate = (date: string | Date): string => {
 </script>
 
 <style scoped>
-.details-card {
+.contact-card {
   padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+  background: #fdfdfd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
   margin: auto;
+  color: #333;
+}
+
+.contact-info p {
+  margin: 10px 0;
+}
+
+.error {
+  color: red;
 }
 </style>
