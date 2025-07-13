@@ -29,6 +29,7 @@ export interface Projects {
   issues?: Issues[]; // Optional: only present if `include: { issues: true }`
   createdAt: string;  // ISO-8601 string
   updatedAt: string;  // ISO-8601 string
+  client?: string; // Optional since it can be null
 }
 
 export interface Task {

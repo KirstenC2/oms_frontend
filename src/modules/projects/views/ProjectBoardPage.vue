@@ -13,7 +13,7 @@
             { key: 'description', label: 'Description' },
             { key: 'createdAt', label: 'Created Date' },
             { key: 'updatedAt', label: 'Last Updated' },
-            { key: 'id', label: 'Request ID' }
+            { key: 'id', label: 'Request ID' },
             ]">
              <template #actions>
                 <button @click="handleRemoveProject">刪除專案</button>
