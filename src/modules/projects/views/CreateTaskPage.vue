@@ -114,11 +114,6 @@ const handleSubmit = async () => {
       throw new Error('請輸入任務所屬的專案 ID。');
     }
 
-    // Dates from datetime-local are already in ISO-like string format (YYYY-MM-DDTHH:mm)
-    // NestJS DTO with @IsDateString() should handle this directly.
-    // No need for .toISOString() here if input type is datetime-local.
-    // If your backend expects YYYY-MM-DDTHH:mm:ss.sssZ, you might need to convert.
-    // For now, assuming NestJS handles YYYY-MM-DDTHH:mm from datetime-local.
 
     console.log('提交任務請求:', payload);
     await createTask(payload); // Use projectService.createTask

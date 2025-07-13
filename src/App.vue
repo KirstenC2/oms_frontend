@@ -22,6 +22,14 @@
         <div v-show="isProjectOpen" class="collapsible-content">
           <RouterLink to="/projects" class="nav-item">Projects</RouterLink>
         </div>
+        <div class="nav-title collapsible-title" @click="toggleClient">
+          Client
+          <span :class="['collapse-icon', { 'rotated': isClientOpen }]"></span>
+        </div>
+        <div v-show="isClientOpen" class="collapsible-content">
+          <RouterLink to="/clients" class="nav-item">Clients</RouterLink>
+        </div>
+
 
       </nav>
       <div class="wrapper">
@@ -39,7 +47,7 @@ import './assets/button.css'
 // State variables to control the visibility of each section
 const isManagementOpen = ref(true); // Start with Management section open by default
 const isProjectOpen = ref(true);    // Start with Project section open by default
-
+const isClientOpen = ref(true);      // Start with Client section open by default
 // Methods to toggle the state
 const toggleManagement = () => {
   isManagementOpen.value = !isManagementOpen.value;
@@ -47,6 +55,10 @@ const toggleManagement = () => {
 
 const toggleProject = () => {
   isProjectOpen.value = !isProjectOpen.value;
+};
+
+const toggleClient = () => {
+  isClientOpen.value = !isClientOpen.value;
 };
 </script>
 

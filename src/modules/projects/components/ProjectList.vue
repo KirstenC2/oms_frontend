@@ -2,34 +2,51 @@
   <div class="project-section">
     <h3>All Projects</h3>
     <div v-if="projectList.length === 0" class="no-projects-message">
-      No Projects Found. 
+      No Projects Found.
     </div>
-    <table v-else class="project-table">
-      <thead>
-        <tr>
-          <th>Project Name</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ProjectListItem
-          v-for="project in projectList"
-          :key="project.id"
-          :projects="project"
-        />
-      </tbody>
-    </table>
+    <div v-else>
+      <table class="project-table">
+        <thead>
+          <tr>
+            <th>Project Name</th>
+            <!-- <th>Start Date</th>
+            <th>End Date</th> -->
+            <th>Tasks</th>
+            <th>Issues</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ProjectListItem
+            v-for="project in paginatedProjectList"
+            :key="project.id"
+            :projects="project"
+          />
+
+        </tbody>
+      </table>
+    </div>
+
+
+    <div v-if="totalPages > 1" class="pagination-controls">
+      <button @click="prevPage" :disabled="currentPage === 1">Previous</button>
+
+      <button v-for="page in totalPages" :key="page" :class="{ active: page === currentPage }" @click="goToPage(page)">
+        {{ page }}
+      </button>
+
+      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, computed,ref } from 'vue';
+import { usePagination } from '@/composable/pagination'; // Adjust path as needed
 import type { Projects } from '@/modules/projects/types/project-types'; // Make sure to adjust the path to your types
 import ProjectListItem from './ProjectListItem.vue'; // Import the ProjectListItem component
 
-defineProps({
+const props = defineProps({
   projectList: {
     type: Array as () => Projects[], // Type assertion for Array of Project
     required: true,
@@ -37,6 +54,20 @@ defineProps({
 });
 
 const emit = defineEmits(['delete-project']); // Renamed from cancel-project to delete-project
+
+const {
+  currentPage,
+  itemsPerPage,
+  totalPages,
+  paginatedItems,
+  goToPage,
+  nextPage,
+  prevPage,
+} = usePagination(props.projectList, 5); // 👈 Not fully reactive if search changes
+
+
+const paginatedProjectList = computed(() => paginatedItems.value);
+
 
 </script>
 
@@ -86,7 +117,8 @@ h3 {
 .action-button.edit-button {
   background-color: #007bff;
   color: white;
-  text-decoration: none; /* For router-link styling */
+  text-decoration: none;
+  /* For router-link styling */
 }
 
 .action-button.edit-button:hover {
@@ -96,7 +128,8 @@ h3 {
 .action-button.view-button {
   background-color: #07ad65;
   color: white;
-  text-decoration: none; /* For router-link styling */
+  text-decoration: none;
+  /* For router-link styling */
 }
 
 .action-button.view-button:hover {

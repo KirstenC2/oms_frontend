@@ -5,11 +5,11 @@ import { useRouter } from 'vue-router'; // <--- NEW IMPORT: Import useRouter
 import type { Projects } from '@/modules/projects/types/project-types'; // Adjust path if needed
 import '@/assets/button.css';
 import '@/assets/table.css';
-
+import StatusBadge from '@/modules/projects/components/StatusBadge.vue'; // Import the StatusBadge component
 const props = defineProps<{
   projects: Projects;
 }>();
-
+// console.log('ProjectListItem: props.projects:', props.projects); // Debugging log to check the projects prop
 const router = useRouter(); 
 // Computed properties to format dates (no change)
 const formattedStartDate = computed(() => {
@@ -32,12 +32,12 @@ const onViewDetailsClick = () => {
 <template>
   <tr>
     <td>{{ props.projects.name }}</td>
-    <td>{{ formattedStartDate }}</td>
-    <td>{{ formattedEndDate }}</td>
+    <!-- <td>{{ formattedStartDate }}</td>
+    <td>{{ formattedEndDate }}</td> -->
+    <td>{{ props.projects.tasks?.length }}</td>
+    <td>{{ props.projects.issues?.length }}</td>
     <td>
-      <span class="status-badge" :class="props.projects.status.toLowerCase()">
-        {{ props.projects.status }}
-      </span>
+      <StatusBadge :status="props.projects.status" />
     </td>
     <td>
       <button class="view-details-btn" @click.stop="onViewDetailsClick">
