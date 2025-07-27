@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { createClient } from '@/modules/clients/api/client-api'
+import { createClient } from '@/modules/crm/api/crm-api'
 
 const client = ref({
   name: '',

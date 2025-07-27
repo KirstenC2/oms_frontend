@@ -23,11 +23,19 @@
           <RouterLink to="/projects" class="nav-item">Projects</RouterLink>
         </div>
         <div class="nav-title collapsible-title" @click="toggleClient">
-          Client
+          CRM
           <span :class="['collapse-icon', { 'rotated': isClientOpen }]"></span>
         </div>
         <div v-show="isClientOpen" class="collapsible-content">
           <RouterLink to="/clients" class="nav-item">Clients</RouterLink>
+          <RouterLink to="/vendors" class="nav-item">Vendors</RouterLink>
+        </div>
+        <div class="nav-title collapsible-title" @click="toggleQuotation">
+          Quotations
+          <span :class="['collapse-icon', { 'rotated': isClientOpen }]"></span>
+        </div>
+        <div v-show="isQuotationOpen" class="collapsible-content">
+          <RouterLink to="/quotations" class="nav-item">Quotations</RouterLink>
         </div>
 
 
@@ -48,6 +56,8 @@ import './assets/button.css'
 const isManagementOpen = ref(true); // Start with Management section open by default
 const isProjectOpen = ref(true);    // Start with Project section open by default
 const isClientOpen = ref(true);      // Start with Client section open by default
+const isQuotationOpen = ref(true);   // Start with Quotation section open by defaultx
+
 // Methods to toggle the state
 const toggleManagement = () => {
   isManagementOpen.value = !isManagementOpen.value;
@@ -59,6 +69,10 @@ const toggleProject = () => {
 
 const toggleClient = () => {
   isClientOpen.value = !isClientOpen.value;
+};
+
+const toggleQuotation = () => {
+  isQuotationOpen.value = !isQuotationOpen.value;
 };
 </script>
 

@@ -21,10 +21,10 @@ import { computed } from 'vue'
 import { deleteDepartment } from '@/modules/departments/department-api';
 import { deleteRole } from '@/modules/users/api/role-api';
 import { deleteUser, deactiveUser, activateUser as activateAPI  } from '@/modules/users/api/user-api';
-import { removeClients } from '@/modules/clients/api/client-api';
+import { removeClients } from '@/modules/crm/api/crm-api';
 const props = defineProps<{
   item: Record<string, any>,
-  type: 'user' | 'department' | 'role' | 'client',
+  type: 'user' | 'department' | 'role' | 'client' | 'vendor' | 'quotation',
 }>()
 
 const emit = defineEmits<{
@@ -37,6 +37,8 @@ const title = computed(() => {
   if (props.type === 'department') return props.item.name || 'Department'
   if (props.type === 'role') return props.item.name || 'Role'
   if (props.type === 'client') return props.item.name || 'Client'
+  if (props.type === 'vendor') return props.item.contactName || 'Vendor'
+  if (props.type === 'quotation') return props.item.referenceCode || 'Quotation'
   return ''
 })
 
@@ -85,6 +87,22 @@ const displayFields = computed(() => {
       'Total Projects': props.item.projects?.length || 0
     }
   }
+  if (props.type === 'vendor') {
+    return {
+      Name: props.item.contactName,
+      Email: props.item.email,
+      Phone: props.item.phone
+    }
+  }
+  if (props.type === 'quotation') {
+    return {
+      'Reference Code': props.item.referenceCode,
+      'Client ID': props.item.clientId,
+      'Total Amount': props.item.total || 0,
+      'Status': props.item.status || 'N/A'
+    }
+  }
+
   return {}
 })
 
@@ -114,7 +132,20 @@ const deleteItem = async () => {
   
       console.log(`Client ${props.item.id} deleted successfully.`)
       emit('refreshRequest')
-    }else {
+    }else if (props.type === 'vendor') {
+      // Assuming you have a deleteVendor function similar to the others
+      // await deleteVendor(props.item.id)
+  
+      console.log(`Vendor ${props.item.id} deleted successfully.`)
+      emit('refreshRequest')
+    } else if (props.type === 'quotation') {
+      // Assuming you have a deleteQuotation function similar to the others
+      // await deleteQuotation(props.item.id)
+  
+      console.log(`Quotation ${props.item.id} deleted successfully.`)
+      emit('refreshRequest')
+    }
+    else {
       console.warn('Unknown type for deletion:', props.type)
     }
 

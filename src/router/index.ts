@@ -6,8 +6,10 @@ import LeaveDetailsPage from '@/modules/leaves/views/LeaveDetailsPage.vue' // Im
 import ProjectView from '@/modules/projects/views/ProjectView.vue'
 import CreateTaskPage from '@/modules/projects/views/CreateTaskPage.vue'
 import ProjectBoardPage from '@/modules/projects/views/ProjectBoardPage.vue'
-import ClientView from '@/modules/clients/views/ClientView.vue'
-
+import ProjectDiagramPage from '@/modules/projects/views/ProjectDiagramPage.vue'
+import ClientView from '@/modules/crm/views/ClientView.vue'
+import VendorView from '@/modules/crm/views/VendorView.vue'
+import QuotationView from '@/modules/quotations/views/QuotationView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -64,6 +66,12 @@ const router = createRouter({
       props: true, // This is crucial: it passes the `id` route parameter as a prop to LeaveDetailsPage
     },
     {
+      path: '/projects/diagram/:id', // `:id` is a route parameter that will capture the leave ID
+      name: 'project-diagram',
+      component: ProjectDiagramPage, // Ensure this component exists
+      props: true, // This is crucial: it passes the `id` route parameter as a prop to LeaveDetailsPage
+    },
+    {
       path: '/create-tasks',
       name: 'tasks',
       component: CreateTaskPage,
@@ -72,7 +80,17 @@ const router = createRouter({
       path: '/clients',
       name: 'clients',
       component: ClientView,
-    }
+    },
+    {
+      path: '/vendors',
+      name: 'vendors',
+      component: VendorView,
+    },
+    {
+      path: '/quotations',
+      name: 'quotations',
+      component: QuotationView,
+    },
   ],
 })
 

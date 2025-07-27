@@ -27,8 +27,8 @@ import { useRouter } from 'vue-router'
 import CardContent from '@/components/CardContent.vue'
 import SubNavBar from '@/components/subcomponent/SubNavBar.vue';
 import type { Field } from '@/components/form/types'
-import { fetchClients } from '@/modules/clients/api/client-api'
-import CreateClientPage from '@/modules/clients/views/CreateClientPage.vue'
+import { fetchClients } from '@/modules/crm/api/crm-api'
+import CreateClientPage from '@/modules/crm/views/CreateClientPage.vue'
 
 const loading = ref(true)
 const error = ref<string | null>(null)

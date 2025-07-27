@@ -8,3 +8,6 @@ export const removeClients = (id: string) =>
 
 export const createClient = (data: Record<string, any>) =>
   axios.post('http://localhost:5001/clients', data)
+
+export const fetchVendors = () =>
+  axios.get('http://localhost:5001/vendors')

@@ -15,6 +15,7 @@
             <th>Issues</th>
             <th>Status</th>
             <th>Action</th>
+            <th>ER Diagram </th>
           </tr>
         </thead>
         <tbody>

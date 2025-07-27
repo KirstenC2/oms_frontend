@@ -27,6 +27,13 @@ const onViewDetailsClick = () => {
   // Use router.push to navigate to the named route, passing the ID as a parameter
   router.push({ name: 'project-details', params: { id: props.projects.id } });
 };
+const onViewDiagramClick = () => {
+  console.log('ProjectListItem: Navigating to Project Details Page for ID:', props.projects.id);
+  // Use router.push to navigate to the named route, passing the ID as a parameter
+  router.push({ name: 'project-diagram', params: { id: props.projects.id } });
+};
+
+
 </script>
 
 <template>
@@ -42,6 +49,11 @@ const onViewDetailsClick = () => {
     <td>
       <button class="view-details-btn" @click.stop="onViewDetailsClick">
         View Details
+      </button>
+    </td>
+    <td>
+      <button class="diagram-btn" @click.stop="onViewDiagramClick">
+        View Diagram
       </button>
     </td>
   </tr>
