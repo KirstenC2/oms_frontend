@@ -1,7 +1,14 @@
 <template>
   <div class="create-diagram-container">
-    <h2>建立/編輯 ER 圖</h2>
-    <h3>ER 圖預覽</h3>
+    <div class="header-bar">
+      <h2>建立/編輯 ER 圖</h2>
+      <div class="page-actions">
+        <button @click="addTable">新增資料表</button>
+        <button @click="exportSVG" class="secondary">匯出 SVG</button>
+        <button class="primary" @click="saveDiagram" title="此功能尚未實作">儲存圖表</button>
+      </div>
+    </div>
+    <h3>ER 圖預覽 (可縮放/拖曳)</h3>
     <div ref="container" class="mermaid-container">
       <div ref="mermaidContainer" class="mermaid"></div>
     </div>
@@ -15,13 +22,16 @@
     >
       <div
         class="table-header"
-        @click="table.collapsed = !table.collapsed"
-        title="點擊展開/收合欄位"
       >
-        <strong>{{ table.name || '未命名資料表' }}</strong>
-        <button type="button" class="toggle-btn">
-          {{ table.collapsed ? '▶' : '▼' }}
-        </button>
+        <strong @click="table.collapsed = !table.collapsed" class="table-title" title="點擊展開/收合欄位">{{ table.name || '未命名資料表' }}</strong>
+        <div class="table-actions">
+          <button type="button" class="toggle-btn" @click="table.collapsed = !table.collapsed">
+            {{ table.collapsed ? '▶' : '▼' }}
+          </button>
+          <button class="delete-table-button" @click="removeTable(tableIndex)" title="刪除資料表">
+            🗑️
+          </button>
+        </div>
       </div>
 
       <div v-show="!table.collapsed" class="table-body">
@@ -54,7 +64,7 @@
     @click="removeColumn(table, colIndex)"
     title="刪除欄位"
   >
-    🗑
+    🗑️
   </button>
         </div>
         <button @click="addColumn(table)">新增欄位</button>
@@ -62,14 +72,13 @@
       </div>
     </div>
 
-    <button @click="addTable">新增資料表</button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch, onMounted, nextTick } from 'vue'
 import mermaid from 'mermaid'
-import panzoom from 'panzoom'
+import panzoom, { type PanZoom } from 'panzoom'
 
 interface Column {
   name: string
@@ -99,6 +108,7 @@ const tables = reactive<Table[]>([
 
 const mermaidContainer = ref<HTMLDivElement | null>(null)
 const container = ref<HTMLDivElement | null>(null)
+const panzoomInstance = ref<PanZoom | null>(null)
 
 function addTable() {
   tables.push({
@@ -116,9 +126,10 @@ function removeColumn(table: Table, colIndex: number) {
   table.columns.splice(colIndex, 1)
 }
 
-function removeTable(table : Table) {
-    tables.pop(table)
+function removeTable(tableIndex: number) {
+  tables.splice(tableIndex, 1);
 }
+
 
 function getReferenceOptions(currentTableName: string): string[] {
   const options: string[] = []
@@ -155,22 +166,55 @@ function generateMermaid(): string {
   return code
 }
 
+function saveDiagram() {
+  // TODO: Implement API call to save the diagram data
+  alert('儲存功能尚未實作。圖表資料結構已輸出到主控台。');
+  console.log(JSON.stringify(tables, null, 2));
+}
+
+async function exportSVG() {
+  if (!mermaidContainer.value || !mermaidContainer.value.querySelector('svg')) {
+    alert('沒有可匯出的圖表。');
+    return;
+  }
+
+  const svgContent = mermaidContainer.value.querySelector('svg')!.outerHTML;
+  const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'er-diagram.svg';
+  document.body.appendChild(a);
+  a.click();
+  
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 async function renderDiagram() {
   if (!mermaidContainer.value) return
+
+  if (panzoomInstance.value) {
+    panzoomInstance.value.dispose();
+    panzoomInstance.value = null;
+  }
+
   const diagramId = 'mermaid-diagram-' + Date.now()
   const code = generateMermaid()
   try {
     const { svg } = await mermaid.render(diagramId, code)
     mermaidContainer.value.innerHTML = svg
     await nextTick()
-    if (mermaidContainer.value) {
-      panzoom(mermaidContainer.value, {
-        zoomSpeed: 0.065,
+    const svgElement = mermaidContainer.value.querySelector('svg');
+    if (svgElement) {
+      panzoomInstance.value = panzoom(svgElement, {
+        bounds: true,
+        boundsPadding: 0.1,
         maxZoom: 4,
         minZoom: 0.2,
-        bounds: true,
-        boundsPadding: 0.1
-      })
+        zoomSpeed: 0.065,
+      });
     }
   } catch (e) {
     mermaidContainer.value.innerHTML = `<pre class="error-message">渲染失敗\n\n${
@@ -197,6 +241,24 @@ watch(tables, renderDiagram, { deep: true })
   color: #333;
 }
 
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.header-bar h2 {
+  margin: 0;
+}
+
+h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #475569;
+  font-weight: 500;
+}
+
 .table-block {
   border: 1px solid #ccc;
   margin-bottom: 20px;
@@ -208,11 +270,22 @@ watch(tables, renderDiagram, { deep: true })
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
   font-size: 1.1em;
   color: #374151;
+  padding: 4px 0;
+}
+
+.table-title {
+  flex-grow: 1;
   cursor: pointer;
   user-select: none;
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 12px;
 }
 
 .toggle-btn {
@@ -284,6 +357,40 @@ button {
 
 button:hover {
   background-color: #1d4ed8;
+}
+
+.page-actions {
+  display: flex;
+  gap: 12px;
+}
+
+button.primary {
+  background-color: #16a34a; /* Green-600 */
+}
+
+.delete-column-button,
+.delete-table-button {
+  background: none;
+  border: none;
+  color: #ef4444; /* Red */
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.delete-column-button:hover,
+.delete-table-button:hover {
+  background-color: #fee2e2; /* Light red background */
+}
+
+button.secondary {
+  background-color: #64748b; /* slate-500 */
+}
+
+button.secondary:hover {
+  background-color: #475569; /* slate-600 */
 }
 
 .mermaid-container {
